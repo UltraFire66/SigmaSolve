@@ -4,7 +4,7 @@ export default function Login({navigation}){
 
     return(
         <>
-            <Text> Login (tela inicial)</Text>
+            <Text> Login</Text>
             <Button onPress={() => {navigation.navigate('Cadastro')}}>ir para Cadastro</Button>
         </>
     )
