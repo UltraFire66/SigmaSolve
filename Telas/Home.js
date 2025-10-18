@@ -1,5 +1,7 @@
 import { View, Text, ScrollView, StyleSheet,Button } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import post from '../components/post';
+import Post from '../components/post';
 
 export default function Home({navigation}){
 
@@ -13,7 +15,10 @@ export default function Home({navigation}){
                 colors = {['#00AACC','#0066FF']}
                 style = {styles.tela}
                 >
-                    
+
+                  <Post></Post>  
+
+
                 </LinearGradient>
             </View>
             
