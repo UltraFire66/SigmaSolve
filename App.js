@@ -5,16 +5,17 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import Login from "./Telas/login";
 import Cadastro from "./Telas/cadastro";
-
+import Home from './Telas/Home';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name = "Login" component={Login}/>
         <Stack.Screen name = "Cadastro" component={Cadastro}/>
+        <Stack.Screen name = "Home" component={Home}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
