@@ -12,7 +12,7 @@ export default function Home({navigation}){
                   <View style = {styles.usuario}>
 
                     <Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />
-                    <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: '15px', display: 'flex',alignItems: 'center'}}>Caio Rangel</Text>
+                    <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 15, display: 'flex',alignItems: 'center'}}>Caio Rangel</Text>
                   </View>
 
                   <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "60%", borderRadius: '10px', backgroundColor: 'white', marginLeft: '8%'}}>
@@ -34,7 +34,7 @@ export default function Home({navigation}){
 
                   <Text style = {styles.titulo}>Física 3</Text>
                   
-                  <TouchableOpacity style = {styles.criarTopico}>criar Tópico</TouchableOpacity>
+                  <TouchableOpacity style = {styles.criarTopico}><Text>criar Tópico</Text></TouchableOpacity>
                   
 
                   </View>
@@ -81,13 +81,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
-    opacity: '1',
+    opacity: 1,
     marginBottom: '10%',
     marginTop: '5%'
   },
   titulo: {
     color: 'white',
-    fontSize: '25px',
+    fontSize: 25,
     fontWeight: '500',
     marginLeft: '38%'
   },
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     width: '25%',
     height: '90%',
     borderRadius: '20px',
-    fontSize: '15px',
+    fontSize: 15,
     fontWeight: '400',
     display: 'flex',
     textAlign:'center',

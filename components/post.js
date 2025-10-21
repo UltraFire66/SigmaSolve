@@ -10,10 +10,10 @@ function Post(props){
                 
                 <View style = {styles.usuario}>
                   <Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />
-                  <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: '10px', display: 'flex',alignItems: 'center', marginBottom: '5px'}}>Caio Rangel</Text>
+                  <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 10, display: 'flex',alignItems: 'center', marginBottom: '5px'}}>Caio Rangel</Text>
                 </View>
 
-                <Text style = {{fontSize: '13px',color: 'black', opacity: '0.5'}}>Há duas horas</Text>
+                <Text style = {{fontSize: 13,color: 'black', opacity: 0.5}}>Há duas horas</Text>
 
                 <Image source = {require("../assets/icones/iconeDenuncia.png")}
                 style = {{width:'20px',height: '20px',marginRight: '3px'}} />
@@ -21,7 +21,7 @@ function Post(props){
 
               </View>
 
-              <Text style = {{fontSize: '10px',fontWeight: 'bold',width: '75%',marginTop: '3%'}}
+              <Text style = {{fontSize: 10,fontWeight: 'bold',width: '75%',marginTop: '3%'}}
               >Alguém poderia me enviar conteúdo sobre eletromagnetismo?? Estou desesperado 😭😭😭😭</Text>
 
             </View>
@@ -29,7 +29,7 @@ function Post(props){
 
               <Image source = {require("../assets/icones/iconeComentario.png")}
               style = {{width:'22px',height: '22px',marginTop: '3px',marginLeft: '3%'}}/>
-              <Text style = {{color: 'white',fontSize: "13px"}}>52</Text>
+              <Text style = {{color: 'white',fontSize: 13}}>52</Text>
 
             </View>
 
