@@ -12,17 +12,19 @@ export default function Home({navigation}){
                   <View style = {styles.usuario}>
 
                     <Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />
-                    <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 15, display: 'flex',alignItems: 'center'}}>Caio Rangel</Text>
+                    <TouchableOpacity onPress={()=>navigation.navigate('Perfil')}>
+                      <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 15, display: 'flex',alignItems: 'center'}}>Caio Rangel</Text>
+                    </TouchableOpacity>
                   </View>
 
-                  <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "60%", borderRadius: '10px', backgroundColor: 'white', marginLeft: '8%'}}>
+                  <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "60%", borderRadius: 10, backgroundColor: 'white', marginLeft: '8%'}}>
                     <TextInput style = {{width: '80%'}} />
                     <Image source = {require("../assets/icones/iconeLupa.png")}
-                    style = {{width: '20px', height: '20px'}}/>
+                    style = {{width: 20, height: 20}}/>
                   </View>
 
                   <Image source = {require("../assets/icones/menuLateral.png")}
-                  style = {{ width: '40px',height:'40px', marginLeft: '7%'}}/>
+                  style = {{ width: 40,height:40, marginLeft: '7%'}}/>
                 </View>
 
                 
@@ -32,9 +34,9 @@ export default function Home({navigation}){
                 >
                   <View style = {styles.topoTela}>
 
-                  <Text style = {styles.titulo}>Física 3</Text>
-                  
-                  <TouchableOpacity style = {styles.criarTopico}><Text>criar Tópico</Text></TouchableOpacity>
+                    <Text style = {styles.titulo}>Física 3</Text>
+                    
+                    <TouchableOpacity style = {styles.criarTopico}><Text>criar Tópico</Text></TouchableOpacity>
                   
 
                   </View>
@@ -45,7 +47,7 @@ export default function Home({navigation}){
                   <Post></Post>  
 
                 </LinearGradient>
-            </View>
+          </View>
             
         </>
     )
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     width: '100%',
-
+    height: '100%',
     alignItems: 'center',
   },
 
@@ -96,9 +98,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width: '25%',
     height: '90%',
-    borderRadius: '20px',
+    borderRadius: 20,
     fontSize: 15,
-    fontWeight: '400',
+    fontWeight: 400,
     display: 'flex',
     textAlign:'center',
     justifyContent: 'center',
@@ -113,8 +115,8 @@ const styles = StyleSheet.create({
   },
 
   medalha:{
-    width: '35px',
-    height: '40px',
+    width: 35,
+    height: 40,
     objectFit: 'contain',
     
   }

@@ -10,13 +10,13 @@ function Post(props){
                 
                 <View style = {styles.usuario}>
                   <Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />
-                  <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 10, display: 'flex',alignItems: 'center', marginBottom: '5px'}}>Caio Rangel</Text>
+                  <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 10, display: 'flex',alignItems: 'center', marginBottom: 5}}>Caio Rangel</Text>
                 </View>
 
                 <Text style = {{fontSize: 13,color: 'black', opacity: 0.5}}>Há duas horas</Text>
 
                 <Image source = {require("../assets/icones/iconeDenuncia.png")}
-                style = {{width:'20px',height: '20px',marginRight: '3px'}} />
+                style = {{width:20,height: 20,marginRight: 3}} />
 
 
               </View>
@@ -28,7 +28,7 @@ function Post(props){
             <View style = {styles.respostas}>
 
               <Image source = {require("../assets/icones/iconeComentario.png")}
-              style = {{width:'22px',height: '22px',marginTop: '3px',marginLeft: '3%'}}/>
+              style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
               <Text style = {{color: 'white',fontSize: 13}}>52</Text>
 
             </View>
@@ -48,8 +48,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     display: 'flex',
     flexDirection: "column",
-    borderTopRightRadius: "15px",
-    borderTopLeftRadius: '15px',
+    borderTopRightRadius: 15,
+    borderTopLeftRadius: 15,
     alignItems: 'center',
   },
   topo:{
@@ -70,8 +70,8 @@ const styles = StyleSheet.create({
   },
 
   medalha:{
-    width: '25px',
-    height: '30px',
+    width: 25,
+    height: 30,
     objectFit: 'contain',
     
   },
@@ -80,8 +80,8 @@ const styles = StyleSheet.create({
     height: '6%',
     width: '80%',
     backgroundColor: '#336699',
-    borderBottomRightRadius: '15px',
-    borderBottomLeftRadius: '15px',
+    borderBottomRightRadius: 15,
+    borderBottomLeftRadius: 15,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
