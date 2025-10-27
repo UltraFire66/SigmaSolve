@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet,Button,Image, TextInput,TouchableOpacity, Touchable} from 'react-native';
+import { View, Text, ScrollView, StyleSheet,Button,Image, TextInput,TouchableOpacity, Touchable, Alert} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react'
 import { Feather } from '@expo/vector-icons';
@@ -14,13 +14,32 @@ export default function Cadastro({navigation}){
     const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
     const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
     const supabase = createClient(supabaseUrl, supabaseKey)
-    async function handleInsert() {
-      const { data, error } = await supabase
-        .from('usuario')
-        .insert([{ nome: nome, email: email, senha: senha }])
-        
-        if (error) console.error(error)
-        else console.log('Usuário inserido:', data)
+    
+
+    async function handleInsert(){
+      if (email.endsWith('@cefetmg.br') || email.endsWith('@aluno.cefetmg.br')){
+        const { data, error} = await supabase
+          .from('usuario')
+          .select('*')
+          .eq('email',email)
+          .maybeSingle()
+        console.log(data)
+        if (!data){
+          if (senha.length >= 6 && senha.length <= 30){
+            if (senha === senha1){
+              const { data, error } = await supabase
+                .from('usuario')
+                .insert([{ nome: nome, email: email, senha: senha }])
+                
+                if (error) console.error(error)
+                else{
+                  Alert.alert('Usuário cadastrado com sucesso!')
+                  navigation.navigate('Login')
+                }
+            }else Alert.alert('As senhas não conferem.')
+          }else Alert.alert('A senha deve ter entre 6 e 30 caracteres.')
+        }else Alert.alert('Já existe um usuário cadastrado com esse email.')
+      }else Alert.alert('Insira um email institucional válido (terminado em @aluno.cefetmg.br ou @cefetmg.br)')
     }
     
 
@@ -58,7 +77,7 @@ export default function Cadastro({navigation}){
                     </TouchableOpacity>
                   </View>
                 </View>
-                <TouchableOpacity style={{marginBottom:0, marginTop:"15%", marginLeft:"10%", height:"11%", width:'80%', alignItems: 'center', justifyContent:'center', borderRadius:10}} onPress={() => {handleInsert(); navigation.navigate('Login')}}>
+                <TouchableOpacity style={{marginBottom:0, marginTop:"15%", marginLeft:"10%", height:"11%", width:'80%', alignItems: 'center', justifyContent:'center', borderRadius:10}} onPress={() => {handleInsert()}}>
                       <LinearGradient style={[{height:"100%", width:'100%', alignItems: 'center', justifyContent:'space-around', flexDirection:'row', borderRadius:10}]} colors={['#0066FF','#00AACC']} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }}>
                           <Text style={{color:'white'}}>Criar Conta</Text>
                       </LinearGradient>
