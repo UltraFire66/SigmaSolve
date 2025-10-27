@@ -23,7 +23,6 @@ export default function Cadastro({navigation}){
           .select('*')
           .eq('email',email)
           .maybeSingle()
-        console.log(data)
         if (!data){
           if (senha.length >= 6 && senha.length <= 30){
             if (senha === senha1){
