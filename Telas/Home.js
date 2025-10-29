@@ -1,9 +1,13 @@
 import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
+import { useContext, useState } from 'react'
+import { IdContext } from '../App';
 
 
 export default function Home({navigation}){
+  const [idUsuario,setIdUsuario] = useContext(IdContext)
+
 
     return(
         <>

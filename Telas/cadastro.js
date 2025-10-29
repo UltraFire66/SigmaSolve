@@ -4,7 +4,9 @@ import { useState } from 'react'
 import { Feather } from '@expo/vector-icons';
 import { createClient } from '@supabase/supabase-js'
 
+
 export default function Cadastro({navigation}){
+  
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
@@ -14,6 +16,7 @@ export default function Cadastro({navigation}){
     const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
     const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
     const supabase = createClient(supabaseUrl, supabaseKey)
+    
     
 
     async function handleInsert(){
