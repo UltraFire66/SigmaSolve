@@ -1,13 +1,30 @@
 import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
+import { createClient } from '@supabase/supabase-js'
 import { IdContext } from '../App';
 
 
 export default function Home({navigation}){
   const [idUsuario,setIdUsuario] = useContext(IdContext)
+  const [nome, setNome] = useState('')
+  const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
+  const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
+  const supabase = createClient(supabaseUrl, supabaseKey)
 
+  async function buscaNome(){
+    const { data, error } = await supabase
+            .from('usuario')
+            .select('*')
+            .eq('idusuario', idUsuario)
+    setNome(data[0].nome)
+    console.log(data[0].nome)
+  }
+  useEffect(() => {
+    buscaNome()
+  }, [])
+  
 
     return(
         <>
@@ -17,7 +34,7 @@ export default function Home({navigation}){
 
                     <Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />
                     <TouchableOpacity onPress={()=>navigation.navigate('Perfil')}>
-                      <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 15, display: 'flex',alignItems: 'center'}}>Caio Rangel</Text>
+                      <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 15, display: 'flex',alignItems: 'center'}}>{nome}</Text>
                     </TouchableOpacity>
                   </View>
 

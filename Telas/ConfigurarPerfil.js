@@ -1,34 +1,80 @@
-import { View, Text, ScrollView, StyleSheet,Button,Image, TextInput,TouchableOpacity, Touchable} from 'react-native';
+import { View, Text, ScrollView, StyleSheet,Button,Image, TextInput,TouchableOpacity, Touchable, Alert} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { Feather } from '@expo/vector-icons';
 import { createClient } from '@supabase/supabase-js'
+import {IdContext} from '../App'
 
 
 
 export default function ConfigurarPerfil({navigation}){
+    const [idUsuario,setIdUsuario] = useContext(IdContext)
     const [nome, setNome] = useState('');
     const [senha, setSenha] = useState('');
     const [senha1, setSenha1] = useState('');
+    const [senhaAtual, setSenhaAtual] = useState('');
     const [ocultarSenha, setOcultarSenha] = useState(true);
     const [ocultarSenha1, setOcultarSenha1] = useState(true);
+    const [ocultarSenha3, setOcultarSenha3] = useState(true);
     const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
     const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
     const supabase = createClient(supabaseUrl, supabaseKey)
+    
     async function handleInsert() {
-      if(senha == senha1 && senha.length >= 6){
+      if(senhaAtual.length > 0){
         const { data, error } = await supabase
-          .from('usuario')
-          .update({ senha: senha, nome: nome})
-          .eq('idusuario', '5')
-          .select()
-          
-          if (error) console.error(error)
-          else console.log('Usuário inserido:', data)
-      }else{
-        console.log('senhas não conferem')
-      }
+              .from('usuario')
+              .select('*')
+              .eq('idusuario', idUsuario)
+              .eq('senha', senhaAtual)
+              .maybeSingle()
+        if(data){
+            if(senha == '' && senha1 ==''){
+            const { data, error } = await supabase
+                .from('usuario')
+                .update({nome: nome})
+                .eq('idusuario', idUsuario)
+                .select()
+            if (error) console.error(error)
+            else{
+                Alert.alert('Dados atualizados com sucesso!')
+                navigation.navigate('Perfil')
+            }
+          }else if(nome.length > 0){
+            if (senha.length >= 6 && senha.length <= 30){
+              if (senha === senha1){
+                const { data, error } = await supabase
+                  .from('usuario')
+                  .update({ senha: senha, nome: nome})
+                  .eq('idusuario', idUsuario)
+                  .select()
+                if (error) console.error(error)
+                else{
+                  Alert.alert('Dados atualizados com sucesso!')
+                  navigation.navigate('Perfil')
+                }
+              }else Alert.alert('As senhas não conferem.')
+            }else Alert.alert('A senha deve ter entre 6 e 30 caracteres.')
+          }else if(nome == ''){
+            if (senha.length >= 6 && senha.length <= 30){
+              if (senha === senha1){
+                const { data, error } = await supabase
+                  .from('usuario')
+                  .update({ senha: senha})
+                  .eq('idusuario', idUsuario)
+                  .select()
+                if (error) console.error(error)
+                else{
+                  Alert.alert('Dados atualizados com sucesso!')
+                  navigation.navigate('Perfil')
+                }
+              }else Alert.alert('As senhas não conferem.')
+            }else Alert.alert('A senha deve ter entre 6 e 30 caracteres.')
+          }
+        }else Alert.alert('A senha atual está incorreta.')
+      }else Alert.alert('A senha atual está incorreta.')
+        
         
     }
     return(
@@ -48,16 +94,23 @@ export default function ConfigurarPerfil({navigation}){
                     </View>
 
                     <View style={{marginTop:"10%"}}>
-                      <Text style={{color:'#003366', marginLeft:"7%", marginTop:"5%", fontWeight: "500"}}>Nome Completo</Text>
+                      <Text style={{color:'white', marginLeft:"7%", marginTop:"5%", fontWeight: "500"}}>Nome Completo</Text>
                       <TextInput value={nome} onChangeText={setNome} style={{width:"90%",backgroundColor: 'white', borderColor: 'gray', borderWidth: 1, paddingHorizontal: 10, borderRadius: 5, marginLeft:"5%"}}/>
-                      <Text style={{color:'#003366', marginLeft:"7%", marginTop:"5%", fontWeight: "500"}}>Nova Senha</Text>
+                      <Text style={{color:'white', marginLeft:"7%", marginTop:"5%", fontWeight: "500"}}>Senha Atual</Text>
+                      <View style={{flexDirection: 'row', alignItems:'center'}}>
+                        <TextInput style={{width:"90%",backgroundColor: 'white', borderColor: 'gray', borderWidth: 1, paddingHorizontal: 10, borderRadius: 5, marginLeft:"5%",paddingRight: 40}} secureTextEntry={ocultarSenha3} value={senhaAtual} onChangeText={setSenhaAtual}/>
+                        <TouchableOpacity style={{position:'absolute', marginLeft:"85%"}} onPress={() => setOcultarSenha3(!ocultarSenha3)}>
+                          <Feather name={ocultarSenha3 ? 'eye-off' : 'eye'} size={22} color="#555" />
+                        </TouchableOpacity>
+                      </View>
+                      <Text style={{color:'white', marginLeft:"7%", marginTop:"5%", fontWeight: "500"}}>Nova Senha</Text>
                       <View style={{flexDirection: 'row', alignItems:'center'}}>
                         <TextInput style={{width:"90%",backgroundColor: 'white', borderColor: 'gray', borderWidth: 1, paddingHorizontal: 10, borderRadius: 5, marginLeft:"5%",paddingRight: 40}} secureTextEntry={ocultarSenha} value={senha} onChangeText={setSenha}/>
                         <TouchableOpacity style={{position:'absolute', marginLeft:"85%"}} onPress={() => setOcultarSenha(!ocultarSenha)}>
                           <Feather name={ocultarSenha ? 'eye-off' : 'eye'} size={22} color="#555" />
                         </TouchableOpacity>
                       </View>
-                      <Text style={{color:'#003366', marginLeft:"7%", marginTop:"5%", fontWeight: "500"}}>Confimar Nova Senha</Text>
+                      <Text style={{color:'white', marginLeft:"7%", marginTop:"5%", fontWeight: "500"}}>Confimar Nova Senha</Text>
                       <View style={{flexDirection: 'row', alignItems:'center'}}>
                         <TextInput style={{width:"90%",backgroundColor: 'white', borderColor: 'gray', borderWidth: 1, paddingHorizontal: 10, borderRadius: 5, marginLeft:"5%",paddingRight: 40}} secureTextEntry={ocultarSenha1} value={senha1} onChangeText={setSenha1}/>
                         <TouchableOpacity style={{position:'absolute', marginLeft:"85%"}} onPress={() => setOcultarSenha1(!ocultarSenha1)}>
@@ -68,10 +121,10 @@ export default function ConfigurarPerfil({navigation}){
 
                 <View style = {{width: '100%',display: 'flex', justifyContent: 'center',alignItems: 'center',marginTop: 20}} >
 
-                    <TouchableOpacity style = {styles.botao} onPress={() => {handleInsert(); navigation.navigate('Perfil')}}>
+                    <TouchableOpacity style = {styles.botao} onPress={() => {handleInsert()}}>
                         <Text style = {{fontSize: 20,fontWeight: 'bold'}}>Salvar</Text>
                     </TouchableOpacity>
-
+                    <Text style={{color:'white', marginTop: "10%"}}>O campo da senha atual deve ser obrigatoriamente preenchido para qualquer alteração. No entanto, pode-se alterar o nome ou a senha independentemente.</Text>
                 </View>
 
                 </LinearGradient>

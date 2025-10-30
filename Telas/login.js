@@ -39,8 +39,8 @@ export default function Cadastro({navigation}){
                 navigation.navigate('Home')
               }
               else{
-                Alert.alert('Usuário não existe!')
-                console.log('Usuario não existe!')
+                Alert.alert('Usuário ou senha incorretos!')
+                console.log('Usuário ou senha incorretos!')
               }
             
          

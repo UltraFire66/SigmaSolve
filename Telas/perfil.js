@@ -1,9 +1,28 @@
 import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
+import { useContext, useState, useEffect } from 'react'
+import { createClient } from '@supabase/supabase-js'
+import { IdContext } from '../App';
 
 
 export default function Perfil({navigation}){
+    const [idUsuario,setIdUsuario] = useContext(IdContext)
+    const [nome, setNome] = useState('')
+    const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
+    const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
+    const supabase = createClient(supabaseUrl, supabaseKey)
+    async function buscaNome(){
+      const { data, error } = await supabase
+              .from('usuario')
+              .select('*')
+              .eq('idusuario', idUsuario)
+      setNome(data[0].nome)
+      console.log(data[0].nome)
+    }
+    useEffect(() => {
+      buscaNome()
+    }, [])
 
     return(
         <>
@@ -15,7 +34,7 @@ export default function Perfil({navigation}){
                    
                    <Image source = {require("../assets/medalhas/medalhaBronze.png")} style = {{width: '57%',height: '37%'}} />
                    <View style = {{display: 'flex',width: '80%', marginBottom: '5%', flexDirection: 'row',alignItems: 'center', justifyContent: 'space-between'}}>
-                        <Text style = {{color: 'white', fontSize: 18, fontWeight: 'bold'}}>Caio Rangel</Text>
+                        <Text style = {{color: 'white', fontSize: 18, fontWeight: 'bold'}}>{nome}</Text>
                         <TouchableOpacity onPress={() => navigation.navigate('ConfigurarPerfil')}>
 
                           <Image source={require("../assets/icones/iconeEngrenagem.png")}
