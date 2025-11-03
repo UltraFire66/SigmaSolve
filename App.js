@@ -8,6 +8,7 @@ import Cadastro from "./Telas/cadastro";
 import Home from './Telas/Home';
 import Perfil from './Telas/perfil';
 import ConfigurarPerfil from './Telas/ConfigurarPerfil';
+import ForumDisciplina from './Telas/forumDisciplina';
 
 
 const Stack = createNativeStackNavigator();
@@ -29,6 +30,7 @@ export default function App() {
           <Stack.Screen name = "Home" component={Home}/>
           <Stack.Screen name = "Perfil" component={Perfil}/>
           <Stack.Screen name = "ConfigurarPerfil" component={ConfigurarPerfil}/>
+          <Stack.Screen name = "ForumDisciplina" component={ForumDisciplina}/>
         </Stack.Navigator>
       </NavigationContainer>
     </IdContext.Provider>

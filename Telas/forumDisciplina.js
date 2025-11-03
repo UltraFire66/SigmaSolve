@@ -1,18 +1,22 @@
-import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput, FlatList} from 'react-native';
+import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Disciplina from '../components/disciplina';
+import Post from '../components/post';
 import { useContext, useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
+import { useRoute } from '@react-navigation/native';
 import { IdContext } from '../App';
 
 
 export default function Home({navigation}){
   const [idUsuario,setIdUsuario] = useContext(IdContext)
   const [nome, setNome] = useState('')
-  const [disciplinas, setDisciplinas] = useState([])
   const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
   const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
   const supabase = createClient(supabaseUrl, supabaseKey)
+  const route = useRoute();
+  const {item} = route.params;
+
+  console.log(item)
 
   async function buscaNome(){
     const { data, error } = await supabase
@@ -22,18 +26,8 @@ export default function Home({navigation}){
     setNome(data[0].nome)
     console.log(data[0].nome)
   }
-
-  async function buscaDisciplinas(){
-    const { data, error } = await supabase
-            .from('disciplina')
-            .select('*')
-    setDisciplinas(data)
-    console.log(disciplinas)
-  }
-
   useEffect(() => {
     buscaNome()
-    buscaDisciplinas()
   }, [])
   
 
@@ -51,7 +45,7 @@ export default function Home({navigation}){
                     </TouchableOpacity>
                   </View>
 
-                  <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "60%", borderRadius: 10, backgroundColor: 'white', marginLeft: '8%'}}>
+                  <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "60%", borderRadius: 10, backgroundColor: 'white', marginLeft: '5%'}}>
                     <TextInput style = {{width: '80%'}} />
                     <Image source = {require("../assets/icones/iconeLupa.png")}
                     style = {{width: 20, height: 20}}/>
@@ -68,22 +62,17 @@ export default function Home({navigation}){
                 >
                   <View style = {styles.topoTela}>
 
-                    <Text style = {styles.titulo}>Disciplinas</Text>              
+                    <Text style = {styles.titulo}>{item.nomedisciplina}</Text>
+                    
+                    <TouchableOpacity style = {styles.criarTopico}><Text>criar Tópico</Text></TouchableOpacity>
+                  
 
                   </View>
 
-                  <View style={{width:"90%", height:"80%", alignItems:'center', justifyContent:'center'}}>
-                    <ScrollView style={{width:"100%", height:'100%'}}>
-                      <FlatList
-                        data={disciplinas}
-                        keyExtractor={(item) => item.idDisciplina.toString()}
-                        scrollEnabled={false}
-                        renderItem={({ item }) => (
-                          <Disciplina disciplina={item.nomedisciplina} onPress={()=>navigation.navigate('ForumDisciplina', {item: item})}></Disciplina>
-                        )}
-                      />
-                    </ScrollView> 
-                  </View> 
+                  <Post></Post>  
+                  <Post></Post>  
+                  <Post></Post> 
+                  <Post></Post>  
 
                 </LinearGradient>
           </View>
@@ -120,9 +109,10 @@ const styles = StyleSheet.create({
   topoTela: {
     width: '100%',
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
     opacity: 1,
-    marginBottom: '7.5%',
+    marginBottom: '10%',
     marginTop: '5%'
   },
   titulo: {
@@ -148,8 +138,8 @@ const styles = StyleSheet.create({
   usuario:{
     display:'flex',
     flexDirection: 'row',
-    justifyContent:'center',
-    alignItems:'center',
+    gap: '5%',
+   
   },
 
   medalha:{
