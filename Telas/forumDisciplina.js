@@ -15,8 +15,8 @@ export default function Home({navigation}){
   const supabase = createClient(supabaseUrl, supabaseKey)
   const route = useRoute();
   const {item} = route.params;
-
-  console.log(item)
+  
+  
 
   async function buscaNome(){
     const { data, error } = await supabase
@@ -64,7 +64,7 @@ export default function Home({navigation}){
 
                     <Text style = {styles.titulo}>{item.nomedisciplina}</Text>
                     
-                    <TouchableOpacity style = {styles.criarTopico}><Text>criar Tópico</Text></TouchableOpacity>
+                    <TouchableOpacity style = {styles.criarTopico} onPress={()=>navigation.navigate('CriarTopico', {item: item.coddisciplina})}><Text>criar Tópico</Text></TouchableOpacity>
                   
 
                   </View>

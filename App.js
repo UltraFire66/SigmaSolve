@@ -9,7 +9,7 @@ import Home from './Telas/Home';
 import Perfil from './Telas/perfil';
 import ConfigurarPerfil from './Telas/ConfigurarPerfil';
 import ForumDisciplina from './Telas/forumDisciplina';
-
+import CriarTopico from './Telas/criarTopico';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +31,7 @@ export default function App() {
           <Stack.Screen name = "Perfil" component={Perfil}/>
           <Stack.Screen name = "ConfigurarPerfil" component={ConfigurarPerfil}/>
           <Stack.Screen name = "ForumDisciplina" component={ForumDisciplina}/>
+          <Stack.Screen name = "CriarTopico" component={CriarTopico}/>
         </Stack.Navigator>
       </NavigationContainer>
     </IdContext.Provider>
