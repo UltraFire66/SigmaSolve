@@ -31,7 +31,12 @@ export default function Perfil({navigation}){
                 colors = {['#00AACC','#0066FF']}
                 style = {styles.tela}
                 >
-                   
+                   <View style={{width: '90%', marginLeft:'5%', marginVertical: '10%',gap:50, display:'flex',flexDirection: 'row', alignItems: 'center'}}>
+                        <TouchableOpacity style = {{width: '10%',backgroundColor: '#D9D9D9', borderRadius: 20, paddingHorizontal: 30, paddingVertical: 5, display: 'flex', alignItems: 'center'}} onPress={() => navigation.navigate('Home')}>
+                            <Image source = {require("../assets/icones/iconeSetaEsquerda.png")}
+                            style = {{width: 30, height: 30}}/>
+                        </TouchableOpacity>
+                   </View>
                    <Image source = {require("../assets/medalhas/medalhaBronze.png")} style = {{width: '57%',height: '37%'}} />
                    <View style = {{display: 'flex',width: '80%', marginBottom: '5%', flexDirection: 'row',alignItems: 'center', justifyContent: 'space-between'}}>
                         <Text style = {{color: 'white', fontSize: 18, fontWeight: 'bold'}}>{nome}</Text>
@@ -42,7 +47,7 @@ export default function Perfil({navigation}){
 
                         </TouchableOpacity>
                    </View>
-                    <View style = {{gap: 10}}>
+                   <View style = {{gap: 10}}>
                         <Text style = {{color: 'white', fontSize: 15, fontWeight: 500}}>Pontuação total do perfil: 500 </Text>
                         <Text style = {{color: 'white', fontSize: 15, fontWeight: 500}}>Pontuação necessária para a próxima medalha: 200</Text>
                     </View>
