@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, StyleSheet,Button,Image, TextInput,TouchableOpacity, Touchable, Alert} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { Feather } from '@expo/vector-icons';
 import { createClient } from '@supabase/supabase-js'
 import {IdContext} from '../App'
@@ -77,6 +77,20 @@ export default function ConfigurarPerfil({navigation}){
         
         
     }
+
+    async function buscaNome(){
+      const { data, error } = await supabase
+              .from('usuario')
+              .select('*')
+              .eq('idusuario', idUsuario)
+      setNome(data[0].nome)
+      console.log(data[0].nome)
+    }
+
+    useEffect(() => {
+        buscaNome()
+    }, [])
+
     return(
         <>
             <View style = {styles.container}>
