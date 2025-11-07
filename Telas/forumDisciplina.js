@@ -5,7 +5,7 @@ import { useContext, useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { useRoute } from '@react-navigation/native';
 import { IdContext } from '../App';
-
+import Menu from '../components/menu';
 
 export default function Home({navigation}){
   const [idUsuario,setIdUsuario] = useContext(IdContext)
@@ -51,8 +51,7 @@ export default function Home({navigation}){
                     style = {{width: 20, height: 20}}/>
                   </View>
 
-                  <Image source = {require("../assets/icones/menuLateral.png")}
-                  style = {{ width: 40,height:40, marginLeft: '7%'}}/>
+                  <Menu navigation={navigation}></Menu>
                 </View>
 
                 

@@ -99,7 +99,7 @@ export default function ConfigurarPerfil({navigation}){
                 style = {styles.tela}
                 >
                     <View style = {{width: '90%', marginLeft:'5%', marginVertical: '10%',gap:50, display:'flex',flexDirection: 'row', alignItems: 'center'}}>
-                        <TouchableOpacity style = {{width: '10%',backgroundColor: '#D9D9D9', borderRadius: 20, paddingHorizontal: 30, paddingVertical: 5, display: 'flex', alignItems: 'center'}} onPress={() => navigation.navigate('Perfil')}>
+                        <TouchableOpacity style = {{width: '10%',backgroundColor: '#D9D9D9', borderRadius: 20, paddingHorizontal: 30, paddingVertical: 5, display: 'flex', alignItems: 'center'}} onPress={() => navigation.goBack()}>
                             <Image source = {require("../assets/icones/iconeSetaEsquerda.png")}
                             style = {{width: 30, height: 30}}/>
                         </TouchableOpacity>
