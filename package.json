@@ -29,6 +29,5 @@
     "react-native-vector-icons": "^10.3.0",
     "react-native-web": "^0.21.0",
     "supabase": "^2.54.11"
-  },
-  "private": true
+  }
 }
