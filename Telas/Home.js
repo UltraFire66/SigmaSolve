@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput, FlatList} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Disciplina from '../components/disciplina';
+import Menu from '../components/menu';
 import { useContext, useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { IdContext } from '../App';
@@ -57,8 +58,7 @@ export default function Home({navigation}){
                     style = {{width: 20, height: 20}}/>
                   </View>
 
-                  <Image source = {require("../assets/icones/menuLateral.png")}
-                  style = {{ width: 40,height:40, marginLeft: '7%'}}/>
+                  <Menu navigation={navigation}></Menu>
                 </View>
 
                 
