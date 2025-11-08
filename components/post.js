@@ -21,7 +21,7 @@ function Post(props){
 
               </View>
 
-              <Text style = {{fontSize: 10,fontWeight: 'bold',width: '75%',marginTop: '3%'}}
+              <Text style = {{fontSize: 14,fontWeight: 'bold',width: '75%',marginTop: '3%'}}
               >Alguém poderia me enviar conteúdo sobre eletromagnetismo?? Estou desesperado 😭😭😭😭</Text>
 
             </View>

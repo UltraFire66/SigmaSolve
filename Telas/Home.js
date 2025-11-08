@@ -25,6 +25,7 @@ export default function Home({navigation}){
   }
 
   async function buscaDisciplinas(){
+    
     const { data, error } = await supabase
             .from('disciplina')
             .select('*')

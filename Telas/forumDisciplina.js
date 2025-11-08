@@ -26,6 +26,7 @@ export default function Home({navigation}){
     setNome(data[0].nome)
     console.log(data[0].nome)
   }
+
   useEffect(() => {
     buscaNome()
   }, [])
@@ -63,7 +64,9 @@ export default function Home({navigation}){
 
                     <Text style = {styles.titulo}>{item.nomedisciplina}</Text>
                     
-                    <TouchableOpacity style = {styles.criarTopico} onPress={()=>navigation.navigate('CriarTopico', {item: item.coddisciplina})}><Text>criar Tópico</Text></TouchableOpacity>
+                    <TouchableOpacity style = {styles.criarTopico} onPress={()=>navigation.navigate('CriarTopico', {item: item})}>
+                      <Text style ={{fontWeight: 'bold'}}>Criar Tópico</Text>
+                    </TouchableOpacity>
                   
 
                   </View>
@@ -108,37 +111,39 @@ const styles = StyleSheet.create({
   topoTela: {
     width: '100%',
     display: 'flex',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
+    alignItems: 'center',
+    flexDirection: 'column',
+    gap: 20,
     opacity: 1,
     marginBottom: '10%',
-    marginTop: '5%'
+    marginTop: '10%'
   },
   titulo: {
     color: 'white',
     fontSize: 25,
     fontWeight: '500',
-    marginLeft: '38%'
+    textAlign: 'center',
   },
   criarTopico: {
-
     backgroundColor: 'white',
     width: '25%',
     height: '90%',
     borderRadius: 20,
     fontSize: 15,
-    fontWeight: 400,
+    fontWeight: 'bold',
     display: 'flex',
     textAlign:'center',
+    alignItems: 'center',
     justifyContent: 'center',
     whiteSpace: 'nowrap',
-    marginRight: '6%'
+    marginRight: '6%',
+    
   },
   usuario:{
     display:'flex',
     flexDirection: 'row',
     gap: '5%',
-   
+   alignItems: 'center',
   },
 
   medalha:{
