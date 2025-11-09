@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput} from 'react-native';
+import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput, FlatList} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
 import { useContext, useState, useEffect } from 'react'
@@ -15,7 +15,8 @@ export default function Home({navigation}){
   const supabase = createClient(supabaseUrl, supabaseKey)
   const route = useRoute();
   const {item} = route.params;
-  
+  const [posts,setPosts] = useState([]);
+
   
 
   async function buscaNome(){
@@ -27,8 +28,25 @@ export default function Home({navigation}){
     console.log(data[0].nome)
   }
 
+  async function buscaPosts(){
+    const { data, error } = await supabase
+            .from('topico')
+            .select(`idtopico,
+              conteudotexto,
+              conteudoimg,
+              titulotopico,
+              datacriacao,
+              usuario (nome)
+              `)
+            .eq('fk_disciplina_coddisciplina', item.coddisciplina);
+    setPosts(data);
+    console.log(data);
+  }
+
+
   useEffect(() => {
     buscaNome()
+    buscaPosts()
   }, [])
   
 
@@ -71,10 +89,18 @@ export default function Home({navigation}){
 
                   </View>
 
-                  <Post></Post>  
-                  <Post></Post>  
-                  <Post></Post> 
-                  <Post></Post>  
+                  <ScrollView style={{width:"100%", height:'100%',display: 'flex'}}>
+                      <View style={{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
+                        <FlatList
+                          data={posts}
+                          keyExtractor={(item) => item.idtopico.toString()}
+                          scrollEnabled={false}
+                          renderItem={({ item }) => (
+                            <Post post={item}></Post>
+                          )}
+                        />
+                      </View>
+                    </ScrollView> 
 
                 </LinearGradient>
           </View>

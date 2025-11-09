@@ -1,16 +1,17 @@
 import {Text,View, StyleSheet, Image} from 'react-native';
-
+import { vh, vw } from 'react-native-css-vh-vw';
 
 function Post(props){
+  
     return(
         <>
-          <View></View>
+          
             <View style = {styles.criarTopico}>
               <View style = {styles.topo}>
                 
                 <View style = {styles.usuario}>
                   <Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />
-                  <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 10, display: 'flex',alignItems: 'center', marginBottom: 5}}>Caio Rangel</Text>
+                  <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 10, display: 'flex',alignItems: 'center', marginBottom: 5}}>{props.post.usuario.nome}</Text>
                 </View>
 
                 <Text style = {{fontSize: 13,color: 'black', opacity: 0.5}}>Há duas horas</Text>
@@ -21,8 +22,8 @@ function Post(props){
 
               </View>
 
-              <Text style = {{fontSize: 14,fontWeight: 'bold',width: '75%',marginTop: '3%'}}
-              >Alguém poderia me enviar conteúdo sobre eletromagnetismo?? Estou desesperado 😭😭😭😭</Text>
+              <Text style = {{fontSize: 14,fontWeight: 'bold',width: '95%',padding:'5%'}}
+              >{props.post.conteudotexto}</Text>
 
             </View>
             <View style = {styles.respostas}>
@@ -43,23 +44,24 @@ const styles = StyleSheet.create({
   
   criarTopico: {
     marginTop: '10%',
-    width:'80%',
-    height: '16%',
+    width:vw(84),
+    height:'auto',
     backgroundColor: 'white',
     display: 'flex',
     flexDirection: "column",
     borderTopRightRadius: 15,
     borderTopLeftRadius: 15,
     alignItems: 'center',
+    
   },
   topo:{
 
-    width: '100%',
+    width: '95%',
     display: 'flex',
     justifyContent:'space-between',
     flexDirection: 'row',
     alignItems: 'center',
-
+    paddingTop: '2%'
   },
 
    usuario:{
@@ -77,8 +79,8 @@ const styles = StyleSheet.create({
   },
 
   respostas: {
-    height: '6%',
-    width: '80%',
+    height: vh(4.3),
+    width: vw(84),
     backgroundColor: '#336699',
     borderBottomRightRadius: 15,
     borderBottomLeftRadius: 15,

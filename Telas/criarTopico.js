@@ -12,9 +12,10 @@ import { useRoute } from '@react-navigation/native';
 export default function CriarTopico({navigation}){
   
   const agora = new Date().toLocaleString('af-ZA',{timeZone: 'America/Sao_Paulo'});
-  console.log(agora.slice(0,20).replaceAll('/','-').replace(',',''));
+  //console.log(agora.slice(0,20).replaceAll('/','-').replace(',',''));
   const route = useRoute();
   const {item} = route.params;
+  console.log(item)
   const[titulo,setTitulo] = useState('');
   const[conteudo,setConteudo]= useState('');
   const[horario,setHorario] = useState(agora.slice(0,20).replaceAll('/','-').replace(',',''));
@@ -22,7 +23,7 @@ export default function CriarTopico({navigation}){
   //console.log(data);
   const[imagem,setImagem] = useState('');
   const[idUsuario,setIdUsuario] = useContext(IdContext);
-  const[codDisciplina,setCodDisciplina] = useState(item.codDisciplina);
+  const[codDisciplina,setCodDisciplina] = useState(item.coddisciplina);
   const[nome,setNome] = useState('');
 
   const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
@@ -37,7 +38,7 @@ export default function CriarTopico({navigation}){
             .select('*')
             .eq('idusuario', idUsuario)
     setNome(data[0].nome)
-    console.log(data[0].nome)
+    //console.log(data[0].nome)
   }
   useEffect(() => {
     buscaNome()
