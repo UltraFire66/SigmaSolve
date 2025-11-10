@@ -5,7 +5,7 @@ import Menu from '../components/menu';
 import { useContext, useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { IdContext } from '../App';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home({navigation}){
   const [idUsuario,setIdUsuario] = useContext(IdContext)
@@ -40,7 +40,7 @@ export default function Home({navigation}){
   
 
     return(
-        <>
+        <SafeAreaView style = {styles.safeContainer}>
             <View style = {styles.container}>
                 <View style = {styles.barraTopo}>
                   <View style = {styles.usuario}>
@@ -89,12 +89,17 @@ export default function Home({navigation}){
                 </LinearGradient>
           </View>
             
-        </>
+        </SafeAreaView>
     )
 
 }
 
 const styles = StyleSheet.create({
+  
+  safeContainer:{
+    flex: 1
+  },
+  
   container: {
     display: 'flex',
     width: '100%',

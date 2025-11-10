@@ -7,7 +7,7 @@ import { Feather } from '@expo/vector-icons';
 import { createClient } from '@supabase/supabase-js'
 import {IdContext} from '../App'
 import { useRoute } from '@react-navigation/native';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function CriarTopico({navigation}){
   
@@ -66,7 +66,7 @@ export default function CriarTopico({navigation}){
   }
   
   return(
-        <>
+        <SafeAreaView style = {styles.safeContainer}>
             <View style = {styles.container}>
 
                 <View style = {styles.barraTopo}>
@@ -122,12 +122,17 @@ export default function CriarTopico({navigation}){
                 </LinearGradient>
             </View>
             
-        </>
+        </SafeAreaView>
     )
 
 }
 
 const styles = StyleSheet.create({
+  
+  safeContainer:{
+    flex: 1
+  },
+  
   container: {
     display: 'flex',
     width: '100%',

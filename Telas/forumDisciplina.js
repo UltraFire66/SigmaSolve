@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput, FlatList} from 'react-native';
+import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput, FlatList, ActivityIndicator} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
 import { useContext, useState, useEffect } from 'react'
@@ -6,6 +6,9 @@ import { createClient } from '@supabase/supabase-js'
 import { useRoute } from '@react-navigation/native';
 import { IdContext } from '../App';
 import Menu from '../components/menu';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { vh, vw } from 'react-native-css-vh-vw';
+
 
 export default function Home({navigation}){
   const [idUsuario,setIdUsuario] = useContext(IdContext)
@@ -16,8 +19,9 @@ export default function Home({navigation}){
   const route = useRoute();
   const {item} = route.params;
   const [posts,setPosts] = useState([]);
+  const [temPost,setTemPost] =  useState('hidden');
+  const [carregando,setCarregando] = useState('visible');
 
-  
 
   async function buscaNome(){
     const { data, error } = await supabase
@@ -28,6 +32,7 @@ export default function Home({navigation}){
     console.log(data[0].nome)
   }
 
+
   async function buscaPosts(){
     const { data, error } = await supabase
             .from('topico')
@@ -37,10 +42,19 @@ export default function Home({navigation}){
               titulotopico,
               datacriacao,
               usuario (nome)
-              `)
+              `, { count: 'exact'})
             .eq('fk_disciplina_coddisciplina', item.coddisciplina);
-    setPosts(data);
-    console.log(data);
+
+    if(data.length != 0){
+      setPosts(data);
+      console.log(data);
+      setCarregando('hidden');
+    }
+    else{
+      setTemPost('visible');
+      setCarregando('hidden');
+    }
+    
   }
 
 
@@ -51,8 +65,9 @@ export default function Home({navigation}){
   
 
     return(
-        <>
+        <SafeAreaView style = {styles.safeContainer}>
             <View style = {styles.container}>
+              
                 <View style = {styles.barraTopo}>
                   <View style = {styles.usuario}>
 
@@ -78,6 +93,14 @@ export default function Home({navigation}){
                 colors = {['#00AACC','#0066FF']}
                 style = {styles.tela}
                 >
+                  
+
+                  <View style={{width: '90%', marginLeft:'5%', marginVertical: '5%',gap:50, display:'flex',flexDirection: 'row', alignItems: 'center'}}>
+                        <TouchableOpacity style = {{width: '10%',backgroundColor: '#D9D9D9', borderRadius: 20, paddingHorizontal: 30, paddingVertical: 5, display: 'flex', alignItems: 'center'}} onPress={() => navigation.goBack()}>
+                            <Image source = {require("../assets/icones/iconeSetaEsquerda.png")}
+                            style = {{width: 30, height: 30}}/>
+                        </TouchableOpacity>
+                   </View>
                   <View style = {styles.topoTela}>
 
                     <Text style = {styles.titulo}>{item.nomedisciplina}</Text>
@@ -100,17 +123,33 @@ export default function Home({navigation}){
                           )}
                         />
                       </View>
+
+                      <View style = {{visibility: carregando,marginTop: vh(6)}}>
+                        <ActivityIndicator size = 'large' color="#000000"/>
+                      </View>
+
+                      <View style = {{display: 'flex', alignItems: 'center', visibility: temPost}}>
+                        <Image source={require('../assets/rato sem post.png')} resizeMode="stretch" style={{marginTop: "10%",width:vw(50),height: vh(30)}} />
+                        <Text style = {styles.titulo}>Ainda não há posts para essa disciplina</Text>
+                      </View>
                     </ScrollView> 
+                  
+                  
 
                 </LinearGradient>
           </View>
             
-        </>
+        </SafeAreaView>
     )
 
 }
 
 const styles = StyleSheet.create({
+  
+  safeContainer:{
+    flex: 1
+  },
+  
   container: {
     display: 'flex',
     width: '100%',
@@ -142,7 +181,7 @@ const styles = StyleSheet.create({
     gap: 20,
     opacity: 1,
     marginBottom: '10%',
-    marginTop: '10%'
+   
   },
   titulo: {
     color: 'white',

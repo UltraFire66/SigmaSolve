@@ -4,7 +4,7 @@ import Post from '../components/post';
 import { useContext, useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { IdContext } from '../App';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Perfil({navigation}){
     const [idUsuario,setIdUsuario] = useContext(IdContext)
@@ -25,7 +25,7 @@ export default function Perfil({navigation}){
     }, [])
 
     return(
-        <>
+        <SafeAreaView style = {styles.safeContainer}>
             <View style = {styles.container}>
                 <LinearGradient 
                 colors = {['#00AACC','#0066FF']}
@@ -57,19 +57,20 @@ export default function Perfil({navigation}){
                       <Text style = {{fontSize: 20,fontWeight: 'bold', color: 'white'}}>Respostas</Text>
                     </View>
 
-                    <Post></Post>
-                    <Post></Post>
-                    <Post></Post>
-
                 </LinearGradient>
             </View>
             
-        </>
+        </SafeAreaView>
     )
 
 }
 
 const styles = StyleSheet.create({
+  
+  safeContainer:{
+    flex: 1
+  },
+  
   container: {
     display: 'flex',
     width: '100%',
