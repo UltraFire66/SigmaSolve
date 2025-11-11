@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput} from 'react-native';
+import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput, FlatList, ActivityIndicator} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
 import { useContext, useState, useEffect } from 'react'
@@ -6,6 +6,9 @@ import { createClient } from '@supabase/supabase-js'
 import { useRoute } from '@react-navigation/native';
 import { IdContext } from '../App';
 import Menu from '../components/menu';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { vh, vw } from 'react-native-css-vh-vw';
+
 
 export default function Home({navigation}){
   const [idUsuario,setIdUsuario] = useContext(IdContext)
@@ -15,8 +18,10 @@ export default function Home({navigation}){
   const supabase = createClient(supabaseUrl, supabaseKey)
   const route = useRoute();
   const {item} = route.params;
-  
-  
+  const [posts,setPosts] = useState([]);
+  const [temPost,setTemPost] =  useState('none');
+  const [carregando,setCarregando] = useState('flex');
+
 
   async function buscaNome(){
     const { data, error } = await supabase
@@ -26,26 +31,55 @@ export default function Home({navigation}){
     setNome(data[0].nome)
     console.log(data[0].nome)
   }
+
+
+  async function buscaPosts(){
+    const { data, error } = await supabase
+            .from('topico')
+            .select(`idtopico,
+              conteudotexto,
+              conteudoimg,
+              titulotopico,
+              datacriacao,
+              usuario (nome)
+              `, { count: 'exact'})
+            .eq('fk_disciplina_coddisciplina', item.coddisciplina);
+
+    if(data.length != 0){
+      setPosts(data);
+      console.log(data);
+      setCarregando('none');
+    }
+    else{
+      setTemPost('flex');
+      setCarregando('none');
+    }
+    
+  }
+
+
   useEffect(() => {
     buscaNome()
+    buscaPosts()
   }, [])
   
 
     return(
-        <>
+        <SafeAreaView style = {styles.safeContainer}>
             <View style = {styles.container}>
+              
                 <View style = {styles.barraTopo}>
                   <View style = {styles.usuario}>
 
                     <Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />
                     <TouchableOpacity onPress={()=>navigation.navigate('Perfil')}>
-                      <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 15, display: 'flex',alignItems: 'center'}}>
+                      <Text style = {{minWidth: vw(20), fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 15, display: 'flex',alignItems: 'center'}}>
                                 {nome.length > 10 ? nome.substring(0, 10) + '...' : nome}
                       </Text>
                     </TouchableOpacity>
                   </View>
 
-                  <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "60%", borderRadius: 10, backgroundColor: 'white', marginLeft: '5%'}}>
+                  <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "60%", borderRadius: 10, backgroundColor: 'white', marginLeft: '5%', marginRight:'5%'}}>
                     <TextInput style = {{width: '80%'}} />
                     <Image source = {require("../assets/icones/iconeLupa.png")}
                     style = {{width: 20, height: 20}}/>
@@ -59,29 +93,64 @@ export default function Home({navigation}){
                 colors = {['#00AACC','#0066FF']}
                 style = {styles.tela}
                 >
+                  
+
+                  <View style={{width: '90%', marginLeft:'5%', marginVertical: '5%',gap:50, display:'flex',flexDirection: 'row', alignItems: 'center'}}>
+                        <TouchableOpacity style = {{width: '10%',backgroundColor: '#D9D9D9', borderRadius: 20, paddingHorizontal: 30, paddingVertical: 5, display: 'flex', alignItems: 'center'}} onPress={() => navigation.goBack()}>
+                            <Image source = {require("../assets/icones/iconeSetaEsquerda.png")}
+                            style = {{width: 30, height: 30}}/>
+                        </TouchableOpacity>
+                   </View>
                   <View style = {styles.topoTela}>
 
                     <Text style = {styles.titulo}>{item.nomedisciplina}</Text>
                     
-                    <TouchableOpacity style = {styles.criarTopico} onPress={()=>navigation.navigate('CriarTopico', {item: item.coddisciplina})}><Text>criar Tópico</Text></TouchableOpacity>
+                    <TouchableOpacity style = {styles.criarTopico} onPress={()=>navigation.navigate('CriarTopico', {item: item})}>
+                      <Text style ={{fontWeight: 'bold'}}>Criar Tópico</Text>
+                    </TouchableOpacity>
                   
 
                   </View>
 
-                  <Post></Post>  
-                  <Post></Post>  
-                  <Post></Post> 
-                  <Post></Post>  
+                  <ScrollView style={{width:"100%", height:'100%',display: 'flex'}}>
+                      <View style={{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
+                        <FlatList
+                          data={posts}
+                          keyExtractor={(item) => item.idtopico.toString()}
+                          scrollEnabled={false}
+                          renderItem={({ item }) => (
+                            <Post post={item}></Post>
+                          )}
+                        />
+                      </View>
+
+                      <View style = {{display:carregando, marginTop: vh(6)}}>
+                        <ActivityIndicator size = 'large' color="#000000"/>
+                      </View>
+
+                      <View style = {{display: temPost, alignItems: 'center'}}>
+                        <Image source={require('../assets/rato sem post.png')} resizeMode="stretch" style={{marginTop: "10%",width:vw(50),height: vh(30)}} />
+                        <Text style = {styles.titulo}>Ainda não há posts para essa disciplina</Text>
+                      </View>
+                    </ScrollView> 
+                  
+                  
 
                 </LinearGradient>
           </View>
             
-        </>
+        </SafeAreaView>
     )
 
 }
 
 const styles = StyleSheet.create({
+  
+  safeContainer:{
+    flex: 1,
+    backgroundColor:'#D9D9D9'
+  },
+  
   container: {
     display: 'flex',
     width: '100%',
@@ -93,7 +162,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9D9D9',
     width: '100%',
     height: '10%',
-    boxShadow: '0px 0px 5px 0px black',
     display:'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -108,37 +176,37 @@ const styles = StyleSheet.create({
   topoTela: {
     width: '100%',
     display: 'flex',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
+    alignItems: 'center',
+    flexDirection: 'column',
+    gap: 20,
     opacity: 1,
     marginBottom: '10%',
-    marginTop: '5%'
+   
   },
   titulo: {
     color: 'white',
     fontSize: 25,
     fontWeight: '500',
-    marginLeft: '38%'
+    textAlign: 'center',
   },
   criarTopico: {
-
     backgroundColor: 'white',
-    width: '25%',
-    height: '90%',
+    width: vw(25),
+    height: vh(6),
     borderRadius: 20,
     fontSize: 15,
-    fontWeight: 400,
+    fontWeight: 'bold',
     display: 'flex',
     textAlign:'center',
+    alignItems: 'center',
     justifyContent: 'center',
-    whiteSpace: 'nowrap',
-    marginRight: '6%'
+    whiteSpace: 'nowrap',   
   },
   usuario:{
     display:'flex',
     flexDirection: 'row',
     gap: '5%',
-   
+   alignItems: 'center',
   },
 
   medalha:{

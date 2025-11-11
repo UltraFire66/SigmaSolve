@@ -5,7 +5,7 @@ import { useState, useContext, useEffect } from 'react'
 import { Feather } from '@expo/vector-icons';
 import { createClient } from '@supabase/supabase-js'
 import {IdContext} from '../App'
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function ConfigurarPerfil({navigation}){
@@ -92,7 +92,7 @@ export default function ConfigurarPerfil({navigation}){
     }, [])
 
     return(
-        <>
+        <SafeAreaView style = {styles.safeContainer}>
             <View style = {styles.container}>
                 <LinearGradient 
                 colors = {['#00AACC','#0066FF']}
@@ -144,12 +144,17 @@ export default function ConfigurarPerfil({navigation}){
                 </LinearGradient>
             </View>
             
-        </>
+        </SafeAreaView>
     )
 
 }
 
 const styles = StyleSheet.create({
+  
+  safeContainer:{
+    flex: 1
+  },
+  
   container: {
     display: 'flex',
     width: '100%',
