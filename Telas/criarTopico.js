@@ -1,4 +1,6 @@
 import { View, Text, ScrollView, StyleSheet,Button,Image, TextInput,TouchableOpacity, Touchable, Alert} from 'react-native';
+import * as FileSystem from 'expo-file-system/legacy';
+import { Buffer } from 'buffer';
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
 import { vh, vw } from 'react-native-css-vh-vw';
@@ -57,6 +59,7 @@ export default function CriarTopico({navigation}){
     }
   };
 
+  
   const uploadImageToSupabase = async (asset) => {
     try {
       setUploading(true);
@@ -66,12 +69,16 @@ export default function CriarTopico({navigation}){
       const newFileName = `${Date.now()}.${fileExt}`;
       const filePath = `public/${newFileName}`;
 
-      const response = await fetch(uri);
-      const blob = await response.blob();
+      // Lê o arquivo local como base64
+      const base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' });
 
+      // Converte para bytes
+      const bytes = Buffer.from(base64, 'base64');
+
+      // Faz upload para o bucket do Supabase
       const { data, error } = await supabase.storage
         .from('imagens')
-        .upload(filePath, blob, {
+        .upload(filePath, bytes, {
           contentType: mimeType || `image/${fileExt}`,
           upsert: false,
         });
@@ -80,7 +87,8 @@ export default function CriarTopico({navigation}){
 
       const publicUrl = `${supabaseUrl}/storage/v1/object/public/imagens/${filePath}`;
       setUploadedUrl(publicUrl);
-      console.log('Upload concluído:', uploadedUrl);
+
+      console.log('Upload concluído:', publicUrl);
       return publicUrl;
     } catch (err) {
       console.error('Erro no upload:', err);
@@ -157,7 +165,7 @@ export default function CriarTopico({navigation}){
                 colors = {['#00AACC','#0066FF']}
                 style = {styles.tela}
                 >
-                  <ScrollView contentContainerStyle={{flexGrow: 1, alignItems: 'center', paddingBottom: 40}} showsVerticalScrollIndicator={false}>
+                  <ScrollView contentContainerStyle={{flexGrow: 1, alignItems: 'center', paddingBottom: 40, minHeight:vh(100)}} showsVerticalScrollIndicator={false}>
                     <View style={{width: '90%', marginLeft:'5%', marginTop:"5%",gap:50, display:'flex',flexDirection: 'row', alignItems: 'center'}}>
                           <TouchableOpacity style = {{width: '10%',backgroundColor: '#D9D9D9', borderRadius: 20, paddingHorizontal: 30, paddingVertical: 5, display: 'flex', alignItems: 'center'}} onPress={() => navigation.goBack()}>
                               <Image source = {require("../assets/icones/iconeSetaEsquerda.png")}
@@ -166,11 +174,11 @@ export default function CriarTopico({navigation}){
                     </View>
                     <View style = {{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
 
-                          <Text style = {{color: 'white',fontSize: 25, fontWeight: 'bold',paddingVertical:20}}>{item.nomedisciplina}</Text>
+                          <Text style = {{color: 'white',fontSize: 25, fontWeight: 'bold',paddingVertical:20, textAlign: 'center',}}>{item.nomedisciplina}</Text>
 
                     </View> 
 
-                      <View style={{width: '90%', backgroundColor: '#336699', borderRadius: 27, paddingVertical: 30, alignItems: 'center'}}>
+                      <View style={{width: vw(85), backgroundColor: '#336699', borderRadius: 27, paddingVertical: 30, alignItems: 'center', marginBottom:vh(5)}}>
                           <View style={{width: '100%', backgroundColor: '#D9D9D9', gap: 10, alignItems: 'center'}}>
                             <Text style = {styles.titulo}>Título do Tópico</Text>
                             <TextInput style = {styles.inputTitulo} value={titulo} onChangeText={setTitulo}/>

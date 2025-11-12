@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput, FlatList, ActivityIndicator} from 'react-native';
+import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput, FlatList, ActivityIndicator, Alert} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
 import { useContext, useState, useEffect } from 'react'
@@ -19,8 +19,8 @@ export default function Home({navigation}){
   const route = useRoute();
   const {item} = route.params;
   const [posts,setPosts] = useState([]);
-  const [temPost,setTemPost] =  useState('none');
-  const [carregando,setCarregando] = useState('flex');
+  const [temPost,setTemPost] =  useState(true);
+  const [carregando,setCarregando] = useState(true);
 
 
   async function buscaNome(){
@@ -44,23 +44,24 @@ export default function Home({navigation}){
               usuario (nome)
               `, { count: 'exact'})
             .eq('fk_disciplina_coddisciplina', item.coddisciplina);
-
+    console.log(data.length)
     if(data.length != 0){
       setPosts(data);
       console.log(data);
-      setCarregando('none');
+      setCarregando(false);
     }
     else{
-      setTemPost('flex');
-      setCarregando('none');
+      setTemPost(false);
+      setCarregando(false);
     }
     
   }
 
 
   useEffect(() => {
-    buscaNome()
     buscaPosts()
+    buscaNome()
+    
   }, [])
   
 
@@ -111,28 +112,27 @@ export default function Home({navigation}){
                   
 
                   </View>
-
-                  <ScrollView contentContainerStyle={{flexGrow: 1, alignItems: 'center', paddingBottom: 100}} showsVerticalScrollIndicator={false}>
+                  {carregando && (<View style = {{display:'flex', marginTop: vh(6)}}>
+                          <ActivityIndicator size = 'large' color="#000000"/>
+                        </View>)}
+                  {temPost ? 
+                  (<ScrollView contentContainerStyle={{flexGrow: 1, alignItems: 'center', paddingBottom: 100, minHeight:vh(100)}} showsVerticalScrollIndicator={false}>
                       <View style={{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
                         <FlatList
                           data={posts}
                           keyExtractor={(item) => item.idtopico.toString()}
                           scrollEnabled={false}
-                          renderItem={({ item }) => (
+                          renderItem={({ item }) => 
                             <Post post={item}></Post>
-                          )}
+                          }
                         />
                       </View>
-
-                      <View style = {{display:carregando, marginTop: vh(6)}}>
-                        <ActivityIndicator size = 'large' color="#000000"/>
-                      </View>
-
-                      <View style = {{display: temPost, alignItems: 'center'}}>
-                        <Image source={require('../assets/rato sem post.png')} resizeMode="stretch" style={{marginTop: "10%",width:vw(50),height: vh(30)}} />
+                  </ScrollView>) : (
+                  <View style = {{display: 'flex', alignItems: 'center', minWidth:vw(50),minHeight: vh(30)}}>
+                        <Image source={require("../assets/rato-sem-post.png")} resizeMode="contain" style={{marginTop: "10%", minWidth:vw(50),minHeight: vh(30)}} />
                         <Text style = {styles.titulo}>Ainda não há posts para essa disciplina</Text>
-                      </View>
-                    </ScrollView> 
+                  </View>)}
+                   
                   
                   
 
