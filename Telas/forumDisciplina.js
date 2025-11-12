@@ -112,7 +112,7 @@ export default function Home({navigation}){
 
                   </View>
 
-                  <ScrollView style={{width:"100%", height:'100%',display: 'flex'}}>
+                  <ScrollView contentContainerStyle={{flexGrow: 1, alignItems: 'center', paddingBottom: 100}} showsVerticalScrollIndicator={false}>
                       <View style={{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
                         <FlatList
                           data={posts}
