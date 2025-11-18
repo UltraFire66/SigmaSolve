@@ -1,7 +1,9 @@
 import {Text,View, StyleSheet, Image, Touchable, TouchableOpacity} from 'react-native';
 
 
+
 function Disciplina(props){
+
     return(
         <>
             <View style={{}}>

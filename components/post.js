@@ -1,8 +1,36 @@
-import {Text,View, StyleSheet, Image} from 'react-native';
+import {Text,View, StyleSheet, Image, Modal, Touchable, TouchableOpacity} from 'react-native';
 import { vh, vw } from 'react-native-css-vh-vw';
+import { createClient } from '@supabase/supabase-js'
+
+import { useState,useEffect } from 'react';
 
 function Post(props){
-  
+
+    const [modalVisible,setModalVisible] = useState(false);
+
+    const [comentarios,setComentarios] = useState([]);
+    
+    const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
+    const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
+    async function buscaComentario(){
+
+      setModalVisible(true);
+
+      const { data, error } = await supabase
+              .from('comentario')
+              .select('*',{count: 'exact'})
+              .eq('fk_topico_idtopico', props.post.idtopico)
+        
+      setComentarios(data);
+    
+    }
+
+    
+    
+
+    
     return(
         <>
           
@@ -28,10 +56,14 @@ function Post(props){
             </View>
             <View style = {styles.respostas}>
 
-              <Image source = {require("../assets/icones/iconeComentario.png")}
-              style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
-              <Text style = {{color: 'white',fontSize: 13}}>52</Text>
+              <TouchableOpacity onPress={buscaComentario} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
 
+                <Image source = {require("../assets/icones/iconeComentario.png")}
+                style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
+                <Text style = {{color: 'white',fontSize: 13}}>52</Text>
+
+              </TouchableOpacity>
+         
             </View>
 
         </>

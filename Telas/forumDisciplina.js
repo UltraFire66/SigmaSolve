@@ -32,6 +32,7 @@ export default function Home({navigation}){
     console.log(data[0].nome)
   }
 
+  
 
   async function buscaPosts(){
     const { data, error } = await supabase
@@ -119,8 +120,10 @@ export default function Home({navigation}){
                           keyExtractor={(item) => item.idtopico.toString()}
                           scrollEnabled={false}
                           renderItem={({ item }) => (
-                            <Post post={item}></Post>
-                          )}
+                          
+                          <Post post={item}></Post>
+                        
+                        )}
                         />
                       </View>
 
