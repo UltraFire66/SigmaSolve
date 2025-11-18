@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput, FlatList, ActivityIndicator} from 'react-native';
+import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput, FlatList, ActivityIndicator, Alert} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
 import { useContext, useState, useEffect } from 'react'
@@ -19,8 +19,8 @@ export default function Home({navigation}){
   const route = useRoute();
   const {item} = route.params;
   const [posts,setPosts] = useState([]);
-  const [temPost,setTemPost] =  useState('hidden');
-  const [carregando,setCarregando] = useState('visible');
+  const [temPost,setTemPost] =  useState(true);
+  const [carregando,setCarregando] = useState(true);
 
 
   async function buscaNome(){
@@ -45,23 +45,24 @@ export default function Home({navigation}){
               usuario (nome)
               `, { count: 'exact'})
             .eq('fk_disciplina_coddisciplina', item.coddisciplina);
-
+    console.log(data.length)
     if(data.length != 0){
       setPosts(data);
       console.log(data);
-      setCarregando('hidden');
+      setCarregando(false);
     }
     else{
-      setTemPost('visible');
-      setCarregando('hidden');
+      setTemPost(false);
+      setCarregando(false);
     }
     
   }
 
 
   useEffect(() => {
-    buscaNome()
     buscaPosts()
+    buscaNome()
+    
   }, [])
   
 
@@ -74,13 +75,13 @@ export default function Home({navigation}){
 
                     <Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />
                     <TouchableOpacity onPress={()=>navigation.navigate('Perfil')}>
-                      <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 15, display: 'flex',alignItems: 'center'}}>
+                      <Text style = {{minWidth: vw(20), fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 15, display: 'flex',alignItems: 'center'}}>
                                 {nome.length > 10 ? nome.substring(0, 10) + '...' : nome}
                       </Text>
                     </TouchableOpacity>
                   </View>
 
-                  <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "60%", borderRadius: 10, backgroundColor: 'white', marginLeft: '5%'}}>
+                  <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "60%", borderRadius: 10, backgroundColor: 'white', marginLeft: '5%', marginRight:'5%'}}>
                     <TextInput style = {{width: '80%'}} />
                     <Image source = {require("../assets/icones/iconeLupa.png")}
                     style = {{width: 20, height: 20}}/>
@@ -112,8 +113,11 @@ export default function Home({navigation}){
                   
 
                   </View>
-
-                  <ScrollView style={{width:"100%", height:'100%',display: 'flex'}}>
+                  {carregando && (<View style = {{display:'flex', marginTop: vh(6)}}>
+                          <ActivityIndicator size = 'large' color="#000000"/>
+                        </View>)}
+                  {temPost ? 
+                  (<ScrollView contentContainerStyle={{flexGrow: 1, alignItems: 'center', paddingBottom: 100, minHeight:vh(100)}} showsVerticalScrollIndicator={false}>
                       <View style={{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
                         <FlatList
                           data={posts}
@@ -126,16 +130,12 @@ export default function Home({navigation}){
                         )}
                         />
                       </View>
-
-                      <View style = {{visibility: carregando,marginTop: vh(6)}}>
-                        <ActivityIndicator size = 'large' color="#000000"/>
-                      </View>
-
-                      <View style = {{display: 'flex', alignItems: 'center', visibility: temPost}}>
-                        <Image source={require('../assets/rato sem post.png')} resizeMode="stretch" style={{marginTop: "10%",width:vw(50),height: vh(30)}} />
+                  </ScrollView>) : (
+                  <View style = {{display: 'flex', alignItems: 'center', minWidth:vw(50),minHeight: vh(30)}}>
+                        <Image source={require("../assets/rato-sem-post.png")} resizeMode="contain" style={{marginTop: "10%", minWidth:vw(50),minHeight: vh(30)}} />
                         <Text style = {styles.titulo}>Ainda não há posts para essa disciplina</Text>
-                      </View>
-                    </ScrollView> 
+                  </View>)}
+                   
                   
                   
 
@@ -150,7 +150,8 @@ export default function Home({navigation}){
 const styles = StyleSheet.create({
   
   safeContainer:{
-    flex: 1
+    flex: 1,
+    backgroundColor:'#D9D9D9'
   },
   
   container: {
@@ -164,7 +165,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9D9D9',
     width: '100%',
     height: '10%',
-    boxShadow: '0px 0px 5px 0px black',
     display:'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -194,8 +194,8 @@ const styles = StyleSheet.create({
   },
   criarTopico: {
     backgroundColor: 'white',
-    width: '25%',
-    height: '90%',
+    width: vw(25),
+    height: vh(6),
     borderRadius: 20,
     fontSize: 15,
     fontWeight: 'bold',
@@ -203,9 +203,7 @@ const styles = StyleSheet.create({
     textAlign:'center',
     alignItems: 'center',
     justifyContent: 'center',
-    whiteSpace: 'nowrap',
-    marginRight: '6%',
-    
+    whiteSpace: 'nowrap',   
   },
   usuario:{
     display:'flex',

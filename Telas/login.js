@@ -53,7 +53,7 @@ export default function Cadastro({navigation}){
             
             <View style={[styles.view1, {justifyContent: 'center', backgroundColor: "blue", width:"100%"}]}>
               <LinearGradient style={[styles.view1, {width:'100%', alignItems: 'center', justifyContent:'center'}]} colors={['#00AACC', '#0066FF']}>
-                  <View style={{backgroundColor: '#D9D9D9', height: "80%", width:"80%", borderRadius: 40}}>
+                  <View style={{backgroundColor: '#D9D9D9', height: "80%", width:"85%", borderRadius: 40}}>
                     <View style={{ alignItems:'center'}}>
                       <Image source={require('../assets/lupa.png')} style={{marginTop: "10%"}} />
                       <Text style={{color:'#0066FF', fontWeight: "bold"}}>SigmaSolve</Text>
@@ -95,7 +95,7 @@ export default function Cadastro({navigation}){
 const styles = StyleSheet.create({
   
   safeContainer:{
-    flex: 1
+    flex: 1,
   },
   
   container: {

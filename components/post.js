@@ -52,7 +52,7 @@ function Post(props){
 
               <Text style = {{fontSize: 14,fontWeight: 'bold',width: '95%',padding:'5%'}}
               >{props.post.conteudotexto}</Text>
-
+              {props.post.conteudoimg && (<Image source={{uri: props.post.conteudoimg}} resizeMode='stretch' style={{width:vw(50), height:vh(20), marginBottom:vh(1)}}/>)}
             </View>
             <View style = {styles.respostas}>
 

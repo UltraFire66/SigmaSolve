@@ -5,6 +5,7 @@ import Menu from '../components/menu';
 import { useContext, useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { IdContext } from '../App';
+import { vh, vw } from 'react-native-css-vh-vw';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home({navigation}){
@@ -47,13 +48,13 @@ export default function Home({navigation}){
 
                     <Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />
                     <TouchableOpacity onPress={()=>navigation.navigate('Perfil')}>
-                      <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 15, display: 'flex',alignItems: 'center'}}>
+                      <Text style = {{minWidth: vw(20), fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 15, display: 'flex',alignItems: 'center'}}>
                                 {nome.length > 10 ? nome.substring(0, 10) + '...' : nome}
                       </Text>
                     </TouchableOpacity>
                   </View>
 
-                  <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "60%", borderRadius: 10, backgroundColor: 'white', marginLeft: '8%'}}>
+                  <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "60%", borderRadius: 10, backgroundColor: 'white', marginLeft: '5%', marginRight:'5%'}}>
                     <TextInput style = {{width: '80%'}} />
                     <Image source = {require("../assets/icones/iconeLupa.png")}
                     style = {{width: 20, height: 20}}/>
@@ -97,7 +98,8 @@ export default function Home({navigation}){
 const styles = StyleSheet.create({
   
   safeContainer:{
-    flex: 1
+    flex: 1,
+    backgroundColor:'#D9D9D9'
   },
   
   container: {
@@ -111,7 +113,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9D9D9',
     width: '100%',
     height: '10%',
-    boxShadow: '0px 0px 5px 0px black',
     display:'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -126,36 +127,39 @@ const styles = StyleSheet.create({
   topoTela: {
     width: '100%',
     display: 'flex',
-    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    gap: 20,
     opacity: 1,
-    marginBottom: '7.5%',
-    marginTop: '5%'
+    marginBottom: '10%',
+    marginTop:'5%'
   },
   titulo: {
     color: 'white',
     fontSize: 25,
     fontWeight: '500',
-    marginLeft: '38%'
+    textAlign: 'center',
   },
   criarTopico: {
-
     backgroundColor: 'white',
     width: '25%',
     height: '90%',
     borderRadius: 20,
     fontSize: 15,
-    fontWeight: 400,
+    fontWeight: 'bold',
     display: 'flex',
     textAlign:'center',
+    alignItems: 'center',
     justifyContent: 'center',
     whiteSpace: 'nowrap',
-    marginRight: '6%'
+    marginRight: '6%',
+    
   },
   usuario:{
     display:'flex',
     flexDirection: 'row',
-    justifyContent:'center',
-    alignItems:'center',
+    gap: '5%',
+   alignItems: 'center',
   },
 
   medalha:{
@@ -165,3 +169,4 @@ const styles = StyleSheet.create({
     
   }
 });
+

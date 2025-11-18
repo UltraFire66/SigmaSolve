@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StyleSheet, Text, View } from 'react-native';
 import { useState,useContext,createContext } from 'react'
+import { vh, vw } from 'react-native-css-vh-vw';
 import Login from "./Telas/login";
 import Cadastro from "./Telas/cadastro";
 import Home from './Telas/Home';

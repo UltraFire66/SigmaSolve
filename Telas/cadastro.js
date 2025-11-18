@@ -55,7 +55,7 @@ export default function Cadastro({navigation}){
                       <Text style={{color:'white', fontSize: 20}}>SigmaSolve</Text>
                       <Text style={{color:'white'}}>Crie sua conta e comece a estudar!</Text>
                 </View>
-                <View style={{backgroundColor: '#D9D9D9', height: "80%", width:"80%", borderRadius: 40}}>
+                <View style={{backgroundColor: '#D9D9D9', height: "80%", width:"85%", borderRadius: 40}}>
                   <View style={{ alignItems:'center'}}>
                     <Text style={{color:'#0066FF', fontWeight: "bold", fontSize: 15, marginTop:"3%"}}>Criar Conta</Text>
                     <Text style={{color:'#00AACC', fontWeight: "bold"}}>Preencha seus dados para se cadastrar</Text>
@@ -85,8 +85,8 @@ export default function Cadastro({navigation}){
                             <Text style={{color:'white'}}>Criar Conta</Text>
                         </LinearGradient>
                   </TouchableOpacity>                
-                  <Text style={{color:'#00AACC', marginLeft:"10%", marginTop:"15%"}}>Já tem uma conta?</Text>
-                  <TouchableOpacity style={{marginTop:"5%", marginLeft:"10%", height:"11%",width:'80%', borderColor:"#0066FF", borderWidth:1, alignItems: 'center', justifyContent:'center', borderRadius:10}} onPress={() => navigation.navigate('Login') }> 
+                  <Text style={{color:'#00AACC', marginLeft:"10%", marginTop:"10%"}}>Já tem uma conta?</Text>
+                  <TouchableOpacity style={{marginTop:"3%", marginLeft:"10%", height:"11%",width:'80%', borderColor:"#0066FF", borderWidth:1, alignItems: 'center', justifyContent:'center', borderRadius:10}} onPress={() => navigation.navigate('Login') }> 
                         <Text style={{color:'#0066FF'}}>Fazer login</Text>
                   </TouchableOpacity> 
                 </View>
@@ -103,7 +103,7 @@ export default function Cadastro({navigation}){
 const styles = StyleSheet.create({
   
   safeContainer:{
-    flex: 1
+    flex: 1,
   },
   
   container: {
