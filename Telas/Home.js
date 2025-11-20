@@ -12,6 +12,10 @@ export default function Home({navigation}){
   const [idUsuario,setIdUsuario] = useContext(IdContext)
   const [nome, setNome] = useState('')
   const [disciplinas, setDisciplinas] = useState([])
+  const [medalhaBronze, setMedalhaBronze] = useState(false)
+  const [medalhaPrata, setMedalhaPrata] = useState(false)
+  const [medalhaOuro, setMedalhaOuro] = useState(false)
+  const [medalhaMax, setMedalhaMax] = useState(false)
   const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
   const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
   const supabase = createClient(supabaseUrl, supabaseKey)
@@ -22,6 +26,15 @@ export default function Home({navigation}){
             .select('*')
             .eq('idusuario', idUsuario)
     setNome(data[0].nome)
+    if(data[0].likes > 15){
+      setMedalhaMax(true)
+    }else if(data[0].likes > 10){
+      setMedalhaOuro(true)
+    }else if(data[0].likes > 5){
+      setMedalhaPrata(true)
+    }else{
+      setMedalhaBronze(true)
+    }
     console.log(data[0].nome)
   }
 
@@ -45,8 +58,10 @@ export default function Home({navigation}){
             <View style = {styles.container}>
                 <View style = {styles.barraTopo}>
                   <View style = {styles.usuario}>
-
-                    <Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />
+                    {medalhaBronze && (<Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />)}
+                    {medalhaPrata && (<Image source = {require("../assets/medalhas/medalhaPrata.png")} style={styles.medalha} />)}
+                    {medalhaOuro && (<Image source = {require("../assets/medalhas/medalhaOuro.png")} style={styles.medalha} />)}
+                    {medalhaMax && (<Image source = {require("../assets/medalhas/medalhaMaxima.png")} style={styles.medalha} />)}
                     <TouchableOpacity onPress={()=>navigation.navigate('Perfil')}>
                       <Text style = {{minWidth: vw(20), fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 15, display: 'flex',alignItems: 'center'}}>
                                 {nome.length > 10 ? nome.substring(0, 10) + '...' : nome}

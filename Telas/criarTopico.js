@@ -29,6 +29,10 @@ export default function CriarTopico({navigation}){
   const[idUsuario,setIdUsuario] = useContext(IdContext);
   const[codDisciplina,setCodDisciplina] = useState(item.coddisciplina);
   const[nome,setNome] = useState('');
+  const [medalhaBronze, setMedalhaBronze] = useState(false)
+  const [medalhaPrata, setMedalhaPrata] = useState(false)
+  const [medalhaOuro, setMedalhaOuro] = useState(false)
+  const [medalhaMax, setMedalhaMax] = useState(false)
 
   const [uploading, setUploading] = useState(false);
   const [imageUri, setImageUri] = useState(null);
@@ -105,8 +109,18 @@ export default function CriarTopico({navigation}){
             .select('*')
             .eq('idusuario', idUsuario)
     setNome(data[0].nome)
-    //console.log(data[0].nome)
+    if(data[0].likes > 15){
+      setMedalhaMax(true)
+    }else if(data[0].likes > 10){
+      setMedalhaOuro(true)
+    }else if(data[0].likes > 5){
+      setMedalhaPrata(true)
+    }else{
+      setMedalhaBronze(true)
+    }
+    console.log(data[0].nome)
   }
+
   useEffect(() => {
     buscaNome()
   }, [])
@@ -147,8 +161,10 @@ export default function CriarTopico({navigation}){
 
                 <View style = {styles.barraTopo}>
                   <View style = {styles.usuario}>
-
-                    <Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />
+                    {medalhaBronze && (<Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />)}
+                    {medalhaPrata && (<Image source = {require("../assets/medalhas/medalhaPrata.png")} style={styles.medalha} />)}
+                    {medalhaOuro && (<Image source = {require("../assets/medalhas/medalhaOuro.png")} style={styles.medalha} />)}
+                    {medalhaMax && (<Image source = {require("../assets/medalhas/medalhaMaxima.png")} style={styles.medalha} />)}
                     <TouchableOpacity onPress={()=>navigation.navigate('Perfil')}>
                       <Text style = {{minWidth: vw(20), fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 15, display: 'flex',alignItems: 'center'}}>
                                 {nome.length > 10 ? nome.substring(0, 10) + '...' : nome}
