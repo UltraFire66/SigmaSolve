@@ -13,13 +13,14 @@ import Menu from '../components/menu';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 
-export default function CriarTopico({navigation}){
+export default function CriarComentario({navigation}){
   
   const agora = new Date().toLocaleString('af-ZA',{timeZone: 'America/Sao_Paulo'});
   //console.log(agora.slice(0,20).replaceAll('/','-').replace(',',''));
   const route = useRoute();
-  const {item} = route.params;
-  console.log(item)
+  const {props} = route.params;
+  const {disciplina} = route.params;
+  console.log(props)
   const[titulo,setTitulo] = useState('');
   const[conteudo,setConteudo]= useState('');
   const[horario,setHorario] = useState(agora.slice(0,20).replaceAll('/','-').replace(',',''));
@@ -27,7 +28,7 @@ export default function CriarTopico({navigation}){
   //console.log(data);
   const[imagem,setImagem] = useState('');
   const[idUsuario,setIdUsuario] = useContext(IdContext);
-  const[codDisciplina,setCodDisciplina] = useState(item.coddisciplina);
+  const[idTopico,setIdTopico] = useState(props.idtopico);
   const[nome,setNome] = useState('');
 
   const [uploading, setUploading] = useState(false);
@@ -111,31 +112,26 @@ export default function CriarTopico({navigation}){
     buscaNome()
   }, [])
     
-  console.log(route.params)
+  
   async function handleInsert(){
       let publicUrl = '';
       if (asset) {
         publicUrl = await uploadImageToSupabase(asset);
       }
-      if(conteudo == '' || titulo == ''){
+      if(conteudo == ''){
         Alert.alert('Os campos devem estar preenchidos!');
         console.log('Os campos devem estar preenchidos!');
       }
       else{
         const { data, error } = await supabase
-        .from('topico')
-        .insert([{ conteudotexto: conteudo, conteudoimg: publicUrl || null, titulotopico: titulo, fk_usuario_idusuario: idUsuario, fk_disciplina_coddisciplina: codDisciplina }])
+        .from('comentario')
+        .insert([{ conteudotexto: conteudo, conteudoimg: publicUrl || null,  fk_topico_idtopico: idTopico}])
                 
         if (error) console.error(error)
         else{
-          Alert.alert('Topico Criado com sucesso!');
-          console.log('Topico Criado com sucesso!');
-
-          navigation.navigate({
-            name: route.params?.fromScreen,
-            params: { item: route.params?.item, atualizar: true },
-            merge: true,
-          });
+          Alert.alert('Comentario Criado com sucesso!');
+          console.log('Comentario Criado com sucesso!');
+          navigation.goBack();
         }
       }
           
@@ -165,7 +161,7 @@ export default function CriarTopico({navigation}){
                   <Menu navigation={navigation}></Menu>
                 </View>
                 
-                
+
                 <LinearGradient 
                 colors = {['#00AACC','#0066FF']}
                 style = {styles.tela}
@@ -179,15 +175,13 @@ export default function CriarTopico({navigation}){
                     </View>
                     <View style = {{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
 
-                          <Text style = {{color: 'white',fontSize: 25, fontWeight: 'bold',paddingVertical:20, textAlign: 'center',}}>{item.nomedisciplina}</Text>
+                          <Text style = {{color: 'white',fontSize: 25, fontWeight: 'bold',paddingVertical:20, textAlign: 'center',}}>{disciplina}</Text>
 
                     </View> 
 
                       <View style={{width: vw(85), backgroundColor: '#336699', borderRadius: 27, paddingVertical: 30, alignItems: 'center', marginBottom:vh(5)}}>
                           <View style={{width: '100%', backgroundColor: '#D9D9D9', gap: 10, alignItems: 'center'}}>
-                            <Text style = {styles.titulo}>Título do Tópico</Text>
-                            <TextInput style = {styles.inputTitulo} value={titulo} onChangeText={setTitulo}/>
-                            <Text style = {styles.titulo}>Conteúdo da postagem</Text>
+                            <Text style = {styles.titulo}>Conteúdo do comentário</Text>
                             <TextInput  multiline={true} style = {styles.inputConteudo} value={conteudo} onChangeText={setConteudo}/>
                             {imageUri && (<Image source={{uri: imageUri}} resizeMode='contain' style={{width:vw(50), height:vh(50)}}/>)}
                             <TouchableOpacity style = {styles.anexarImagem} onPress={pickImage}>
@@ -195,7 +189,7 @@ export default function CriarTopico({navigation}){
                             </TouchableOpacity>
                             <TouchableOpacity style = {styles.criarTopico} onPress={() => {handleInsert()}}>
                               <LinearGradient style={[{height:"100%", width:'100%', alignItems: 'center', justifyContent:'space-around', flexDirection:'row', borderRadius:20}]} colors={['#0066FF','#00AACC']} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }}>
-                                <Text style={{color:'white'}}>Criar Tópico</Text>
+                                <Text style={{color:'white'}}>Fazer comentario</Text>
                               </LinearGradient>
                             </TouchableOpacity>
                           </View>

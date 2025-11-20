@@ -26,7 +26,7 @@ function Post(props){
 
     async function buscaComentario(){
 
-      setModalVisible(true);
+      //setModalVisible(true);
 
       const { data, error } = await supabase
               .from('comentario')
@@ -164,8 +164,7 @@ function Post(props){
               {props.post.conteudoimg && (<Image source={{uri: props.post.conteudoimg}} resizeMode='stretch' style={{width:vw(50), height:vh(20), marginBottom:vh(1)}}/>)}
             </View>
             <View style = {styles.respostas}>
-
-              <TouchableOpacity onPress={buscaComentario} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
+              <TouchableOpacity onPress={() => { buscaComentario(); props.navigation.navigate('Topico', { props: props }); }} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
 
                 <Image source = {require("../assets/icones/iconeComentario.png")}
                 style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>

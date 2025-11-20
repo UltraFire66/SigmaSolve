@@ -1,28 +1,27 @@
 import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput, FlatList, ActivityIndicator, Alert} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
-import { useContext, useState, useEffect, useCallback } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { useRoute } from '@react-navigation/native';
 import { IdContext } from '../App';
 import Menu from '../components/menu';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { vh, vw } from 'react-native-css-vh-vw';
-import { useFocusEffect } from '@react-navigation/native';
 
 
-export default function Home({navigation}){
+export default function Topico({navigation}){
   const [idUsuario,setIdUsuario] = useContext(IdContext)
   const [nome, setNome] = useState('')
   const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
   const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
   const supabase = createClient(supabaseUrl, supabaseKey)
   const route = useRoute();
-  const {item} = route.params;
+  const {props} = route.params;
   const [posts,setPosts] = useState([]);
   const [temPost,setTemPost] =  useState(true);
   const [carregando,setCarregando] = useState(true);
-  const nomeDis = item.nomedisciplina
+  console.log(props)
 
   async function buscaNome(){
     const { data, error } = await supabase
@@ -45,7 +44,7 @@ export default function Home({navigation}){
               datacriacao,
               usuario (nome)
               `, { count: 'exact'})
-            .eq('fk_disciplina_coddisciplina', item.coddisciplina);
+            .eq('fk_disciplina_coddisciplina', props.idcodigo);
     console.log(data.length)
     if(data.length != 0){
       setPosts(data);
@@ -59,22 +58,16 @@ export default function Home({navigation}){
     
   }
 
+
   useEffect(() => {
-    buscaPosts()
     buscaNome()
-  }, []);
-  useEffect(() => {
-    if (route.params?.atualizar) {
-      buscaPosts();
-      // opcional: limpar o parâmetro
-      navigation.setParams({ atualizar: undefined });
-    }
-  }, [route.params?.atualizar]);
+    
+  }, [])
+  
 
     return(
         <SafeAreaView style = {styles.safeContainer}>
             <View style = {styles.container}>
-              
                 <View style = {styles.barraTopo}>
                   <View style = {styles.usuario}>
 
@@ -100,49 +93,20 @@ export default function Home({navigation}){
                 colors = {['#00AACC','#0066FF']}
                 style = {styles.tela}
                 >
-                  
-
-                  <View style={{width: '90%', marginLeft:'5%', marginVertical: '5%',gap:50, display:'flex',flexDirection: 'row', alignItems: 'center'}}>
-                        <TouchableOpacity style = {{width: '10%',backgroundColor: '#D9D9D9', borderRadius: 20, paddingHorizontal: 30, paddingVertical: 5, display: 'flex', alignItems: 'center'}} onPress={() => navigation.navigate('Home')}>
+                    <View style={{width: '90%', marginLeft:'5%', marginVertical: '5%',gap:50, display:'flex',flexDirection: 'row', alignItems: 'center'}}>
+                        <TouchableOpacity style = {{width: '10%',backgroundColor: '#D9D9D9', borderRadius: 20, paddingHorizontal: 30, paddingVertical: 5, display: 'flex', alignItems: 'center'}} onPress={() => navigation.goBack()}>
                             <Image source = {require("../assets/icones/iconeSetaEsquerda.png")}
                             style = {{width: 30, height: 30}}/>
                         </TouchableOpacity>
-                   </View>
-                  <View style = {styles.topoTela}>
-
-                    <Text style = {styles.titulo}>{item.nomedisciplina}</Text>
+                    </View>
+                    <View style = {styles.topoTela}>
+                        <Text style = {styles.titulo}>{props.disciplina}</Text>
+                    </View>
+                    <TouchableOpacity style = {styles.criarTopico} onPress={()=>navigation.navigate('CriarComentario', {props: props.post, disciplina: props.disciplina})}>
+                        <Text style ={{fontWeight: 'bold'}}>Comentar</Text>
+                    </TouchableOpacity>                  
                     
-                    <TouchableOpacity style = {styles.criarTopico} onPress={()=>navigation.navigate('CriarTopico', {item: item, fromScreen: 'ForumDisciplina'})}>
-                      <Text style ={{fontWeight: 'bold'}}>Criar Tópico</Text>
-                    </TouchableOpacity>
-                  
-
-                  </View>
-                  {carregando && (<View style = {{display:'flex', marginTop: vh(6)}}>
-                          <ActivityIndicator size = 'large' color="#000000"/>
-                        </View>)}
-                  {temPost ? 
-                  (<ScrollView contentContainerStyle={{flexGrow: 1, alignItems: 'center', paddingBottom: 100, minHeight:vh(100)}} showsVerticalScrollIndicator={false}>
-                      <View style={{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
-                        <FlatList
-                          data={posts}
-                          keyExtractor={(item) => item.idtopico.toString()}
-                          scrollEnabled={false}
-                          renderItem={({ item }) => (
-                          
-                            <Post disciplina = {nomeDis} post={item} navigation = {navigation}></Post>
-
-                        )}
-                        />
-                      </View>
-                  </ScrollView>) : (
-                  <View style = {{display: 'flex', alignItems: 'center', minWidth:vw(50),minHeight: vh(30)}}>
-                        <Image source={require("../assets/rato-sem-post.png")} resizeMode="contain" style={{marginTop: "10%", minWidth:vw(50),minHeight: vh(30)}} />
-                        <Text style = {styles.titulo}>Ainda não há posts para essa disciplina</Text>
-                  </View>)}
-                   
-                  
-                  
+                    <Post post={props.post}></Post>
 
                 </LinearGradient>
           </View>
