@@ -1,4 +1,4 @@
-import {Text,View, StyleSheet, Image, Modal, Touchable, TouchableOpacity, Alert} from 'react-native';
+import {Text,View, StyleSheet, Image, Modal, Touchable, TouchableOpacity, Alert, ActivityIndicator} from 'react-native';
 import { vh, vw } from 'react-native-css-vh-vw';
 import { createClient } from '@supabase/supabase-js'
 
@@ -9,6 +9,11 @@ function Post(props){
 
     const [modalVisible,setModalVisible] = useState(false);
 
+    const [checaDenuncia,setChecaDenuncia] = useState();
+    const [carregandoDenuncia,setCarregandoDenuncia] = useState(false);
+
+    const [textoDenuncia,setTextoDenuncia] = useState();
+
     const [comentarios,setComentarios] = useState([]);
     
     const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
@@ -16,6 +21,8 @@ function Post(props){
     const supabase = createClient(supabaseUrl, supabaseKey)
     const[idUsuario,setIdUsuario] = useContext(IdContext);
 
+
+    
 
     async function buscaComentario(){
 
@@ -30,14 +37,27 @@ function Post(props){
     
     }
 
-    async function realizarDenuncia(){
-      const { data, error} = await supabase
+    async function procuraDenuncia(){
+       const { data, error} = await supabase
         .from('denunciatopico')
         .select('*')
         .eq('fk_usuario_idusuario', idUsuario)
         .eq('fk_topico_idtopico', props.post.idtopico)
         .maybeSingle()
-      if (!data){
+
+        console.log(data);
+
+        if(data)
+          setTextoDenuncia('Deseja retirar a denúncia?');        
+        else
+          setTextoDenuncia('Deseja fazer a denúncia?');
+
+        setChecaDenuncia(data);
+        setCarregandoDenuncia(false);
+    }
+
+    async function realizarDenuncia(){
+      
         const { data, error } = await supabase
           .from('denunciatopico')
           .insert([{ flagdenuncia: true, fk_usuario_idusuario: idUsuario, fk_topico_idtopico: props.post.idtopico}])
@@ -46,10 +66,43 @@ function Post(props){
             Alert.alert('Denúncia cadastrada com sucesso!')
             //setar modal falso fechar
           }
-      }else console.log('Denuncia já feita!!!!!!!'); //retirar denuncia setando flag pra false
+   
     }
 
-    
+    async function retirarDenuncia(){
+
+      const { data, error } = await supabase
+        .from('denunciatopico')
+          .delete()
+          .eq('iddenuncia', checaDenuncia.iddenuncia)
+          if (error) console.error(error)
+          else{
+            Alert.alert('Denúncia retirada com sucesso!')
+            //setar modal falso fechar
+          }
+          
+          
+
+       
+
+    }
+
+    function funcaodoSim(){
+
+       setModalVisible(false); 
+
+      if(checaDenuncia){
+     
+        retirarDenuncia();
+
+      }
+      else{
+     
+        realizarDenuncia();
+
+      }
+
+    }
     
 
     
@@ -65,7 +118,7 @@ function Post(props){
 
                 <Text style = {{fontSize: 13,color: 'black', opacity: 0.5}}>Há duas horas</Text>
 
-                <TouchableOpacity onPressOut={() => {setModalVisible(true)}}>
+                <TouchableOpacity onPressOut={() => { setCarregandoDenuncia(true),procuraDenuncia(), setModalVisible(true)}}>
                   <Image source = {require("../assets/icones/iconeDenuncia.png")}
                   style = {{width:20,height: 20,marginRight: 3}} />
                 </TouchableOpacity>
@@ -76,23 +129,32 @@ function Post(props){
                 >
                   <TouchableOpacity style={{backgroundColor: 'rgba(0, 0, 0, 0.5)', width:vw(100), height: vh(100)}} onPressOut={() => setModalVisible(false)}>                  
                   </TouchableOpacity>
-                  <View style={{backgroundColor:'white', borderWidth:3, borderColor:'#D9D9D9', position: 'absolute', width: vw(90), height: vh(20), right: vw(5), top: vh(40), borderRadius:35, display: 'flex', alignItems:'center', justifyContent:'center', gap:vh(5)}}>
-                    <Text style={{fontWeight:600, fontSize:18, textAlign:'center'}}>
-                      Deseja realmente denunciar este tópico?
-                    </Text>
-                    <View style={{display:'flex', flexDirection:'row', gap:vw(15)}}>
-                      <TouchableOpacity style={{backgroundColor:'#78ABC6', paddingVertical:vh(1.5), paddingHorizontal:vw(5), borderRadius:15}} onPressOut={()=>{setModalVisible(false); realizarDenuncia()}}>
-                        <Text style={{fontWeight:600, fontSize:18, color:'white'}}>
-                          Sim
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={{backgroundColor:'#E04083', paddingVertical:vh(1.5), paddingHorizontal:vw(5), borderRadius:15}} onPressOut={()=>{setModalVisible(false)}}>
-                        <Text style={{fontWeight:600, fontSize:18, color:'white'}}>
-                          Não
-                        </Text>
-                      </TouchableOpacity>
+                 
+
+                    <View style={{backgroundColor:'white', borderWidth:3, borderColor:'#D9D9D9', position: 'absolute', width: vw(90), height: vh(20), right: vw(5), top: vh(40), borderRadius:35, display: 'flex', alignItems:'center', justifyContent:'center', gap:vh(5)}}>
+                       {carregandoDenuncia ? (<ActivityIndicator size = 'large' color="#000000"/>) :
+                  ( 
+                    <>
+                      <Text style={{fontWeight:600, fontSize:18, textAlign:'center'}}>{textoDenuncia}</Text>
+                      <View style={{display:'flex', flexDirection:'row', gap:vw(15)}}>
+                        
+                       <TouchableOpacity style={{backgroundColor:'#78ABC6', paddingVertical:vh(1.5), paddingHorizontal:vw(5), borderRadius:15}} onPressOut={()=>{funcaodoSim()}}>
+                          <Text style={{fontWeight:600, fontSize:18, color:'white'}}>
+                            Sim
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{backgroundColor:'#E04083', paddingVertical:vh(1.5), paddingHorizontal:vw(5), borderRadius:15}} onPressOut={()=>{setChecaDenuncia(),setModalVisible(false)}}>
+                          <Text style={{fontWeight:600, fontSize:18, color:'white'}}>
+                            Não
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                      </>
+                      )
+                  }
                     </View>
-                  </View>
+
+                  
                 </Modal>
 
               </View>
