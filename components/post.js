@@ -1,9 +1,12 @@
-import {Text,View, StyleSheet, Image, Modal, Touchable, TouchableOpacity, Alert, ActivityIndicator} from 'react-native';
+import {Text,View, StyleSheet, Image, Modal, Touchable, TouchableOpacity, Alert, ActivityIndicator,FlatList} from 'react-native';
 import { vh, vw } from 'react-native-css-vh-vw';
 import { createClient } from '@supabase/supabase-js'
 
-import { useState,useContext } from 'react';
+import { useState,useContext,useEffect } from 'react';
 import { IdContext } from '../App';
+import CriarComentario from '../Telas/criarComentario';
+import Comentario from './comentario';
+
 
 function Post(props){
 
@@ -12,19 +15,25 @@ function Post(props){
     const [checaDenuncia,setChecaDenuncia] = useState();
     const [carregandoDenuncia,setCarregandoDenuncia] = useState(false);
 
+
     const [textoDenuncia,setTextoDenuncia] = useState();
 
     const [comentarios,setComentarios] = useState([]);
-    
+    const [numComentarios,setNumComentarios] = useState();
+    const [carregandoComentarios,setCarregandoComentarios] = useState(false);
+
+
     const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
     const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
     const supabase = createClient(supabaseUrl, supabaseKey)
     const[idUsuario,setIdUsuario] = useContext(IdContext);
 
 
+    const [abrirComentario,setAbrirComentario] = useState(false);
+
     
 
-    async function buscaComentario(){
+    async function buscaNumComentario(){
 
       //setModalVisible(true);
 
@@ -33,8 +42,31 @@ function Post(props){
               .select('*',{count: 'exact'})
               .eq('fk_topico_idtopico', props.post.idtopico)
         
+      setNumComentarios(data.length);
+      
+    }
+
+    async function buscaComentario(){
+
+      //setModalVisible(true);
+
+      const { data, error } = await supabase
+              .from('comentario')
+              .select(`
+                idcomentario,
+                conteudotexto,
+                conteudoimg,
+                data,
+                fk_topico_idtopico,
+                likes,
+                usuario (nome,likes)
+
+              `,{count: 'exact'})
+              .eq('fk_topico_idtopico', props.post.idtopico)
+        
       setComentarios(data);
-    
+      console.log(data);
+      setCarregandoComentarios(false);
     }
 
     async function procuraDenuncia(){
@@ -45,7 +77,7 @@ function Post(props){
         .eq('fk_topico_idtopico', props.post.idtopico)
         .maybeSingle()
 
-        console.log(data);
+        //console.log(data);
 
         if(data)
           setTextoDenuncia('Deseja retirar a denúncia?');        
@@ -105,6 +137,11 @@ function Post(props){
     }
     
 
+    useEffect(()=>{
+
+      buscaNumComentario();
+
+    },[])
     
     return(
         <>
@@ -163,16 +200,63 @@ function Post(props){
               >{props.post.conteudotexto}</Text>
               {props.post.conteudoimg && (<Image source={{uri: props.post.conteudoimg}} resizeMode='stretch' style={{width:vw(50), height:vh(20), marginBottom:vh(1)}}/>)}
             </View>
-            <View style = {styles.respostas}>
-              <TouchableOpacity onPress={() => { buscaComentario(); props.navigation.navigate('Topico', { props: props }); }} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
+              {abrirComentario 
+            
+            
+              
+              /* caso tenha clicado no comentário */
+              ? (
+                <View style ={[styles.respostas,{height: 'auto',paddingTop: vh(1),paddingBottom: vh(4),justifyContent: 'flex-start',alignItems: 'center',flexDirection:  'column',gap: vh(2)}]} >
+                  {carregandoComentarios ? (
 
-                <Image source = {require("../assets/icones/iconeComentario.png")}
-                style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
-                <Text style = {{color: 'white',fontSize: 13}}>52</Text>
+                    <ActivityIndicator style = {{marginTop:vh(2)}} size = 'large' color="#000000"/>
 
-              </TouchableOpacity>
-         
-            </View>
+                  ) : (
+
+                    <>
+                      <TouchableOpacity onPressOut={() => {setAbrirComentario(false)}}>
+                        <Image source = {require("../assets/icones/iconeSetaPraCima.png")}
+                        style = {{width:20,height: 20,marginRight: 3}} />
+                      </TouchableOpacity>
+                      
+                      <TouchableOpacity style = {styles.criarComentario} onPress={()=>navigation.navigate('CriarComentario', {props: props.post, disciplina: props.disciplina})}>
+                          <Text style ={{fontWeight: 'bold'}}>Comentar</Text>
+                      </TouchableOpacity>
+
+                      <FlatList
+                          data={comentarios}
+                          keyExtractor={(item) => item.idcomentario.toString()}
+                          scrollEnabled={false}
+                          renderItem={({ item }) => (
+                          
+                            <Comentario comentario = {item} navigation = {navigation}></Comentario>
+
+                        )}
+                        />
+
+                      
+                    </>
+                  )}
+
+                </View>
+                
+              ) 
+              
+              
+              
+              /* caso ainda nao tenha clicado no comentário */
+              : (
+                <View style = {styles.respostas}>
+                  <TouchableOpacity onPress={() => {setAbrirComentario(true),setCarregandoComentarios(true),buscaComentario()}} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
+                    
+                    <Image source = {require("../assets/icones/iconeComentario.png")}
+                    style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
+                    <Text style = {{color: 'white',fontSize: 13}}>{numComentarios}</Text>
+
+                  </TouchableOpacity>
+                </View>
+              )}
+           
 
         </>
     )
@@ -229,5 +313,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: '3%',
     
+  },
+
+  criarComentario:{
+    backgroundColor: 'white',
+    width: vw(35),
+    height: vh(6),
+    borderRadius: 20,
+    fontSize: 15,
+    fontWeight: 'bold',
+    display: 'flex',
+    textAlign:'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    whiteSpace: 'nowrap',   
   }
+  
+ 
 });
