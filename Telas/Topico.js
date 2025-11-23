@@ -4,14 +4,14 @@ import Post from '../components/post';
 import { useContext, useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { useRoute } from '@react-navigation/native';
-import { IdContext } from '../App';
+import { userID } from '../context/idUsuario';
 import Menu from '../components/menu';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { vh, vw } from 'react-native-css-vh-vw';
 
 
 export default function Topico({navigation}){
-  const [idUsuario,setIdUsuario] = useContext(IdContext)
+  const [idUsuario,setIdUsuario] = useContext(userID)
   const [nome, setNome] = useState('')
   const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
   const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"

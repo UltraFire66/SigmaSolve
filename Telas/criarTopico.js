@@ -7,7 +7,7 @@ import { vh, vw } from 'react-native-css-vh-vw';
 import { React, useState, useContext,useEffect } from 'react'
 import { Feather } from '@expo/vector-icons';
 import { createClient } from '@supabase/supabase-js'
-import {IdContext} from '../App'
+import { userID } from '../context/idUsuario';
 import { useRoute } from '@react-navigation/native';
 import Menu from '../components/menu';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -26,7 +26,7 @@ export default function CriarTopico({navigation}){
   //const[data,setData] = useState(agora.toISOString().slice(0, 19).replace('T', ' '));
   //console.log(data);
   const[imagem,setImagem] = useState('');
-  const[idUsuario,setIdUsuario] = useContext(IdContext);
+  const[idUsuario,setIdUsuario] = useContext(userID);
   const[codDisciplina,setCodDisciplina] = useState(item.coddisciplina);
   const[nome,setNome] = useState('');
   const [medalhaBronze, setMedalhaBronze] = useState(false)

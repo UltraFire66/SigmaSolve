@@ -4,12 +4,12 @@ import Disciplina from '../components/disciplina';
 import Menu from '../components/menu';
 import { useContext, useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
-import { IdContext } from '../App';
+import { userID } from '../context/idUsuario';
 import { vh, vw } from 'react-native-css-vh-vw';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home({navigation}){
-  const [idUsuario,setIdUsuario] = useContext(IdContext)
+  const [idUsuario,setIdUsuario] = useContext(userID)
   const [nome, setNome] = useState('')
   const [disciplinas, setDisciplinas] = useState([])
   const [medalhaBronze, setMedalhaBronze] = useState(false)

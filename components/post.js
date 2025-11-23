@@ -1,10 +1,9 @@
 import {Text,View, StyleSheet, Image, Modal, Touchable, TouchableOpacity, Alert, ActivityIndicator,FlatList} from 'react-native';
 import { vh, vw } from 'react-native-css-vh-vw';
 import { createClient } from '@supabase/supabase-js'
-
 import { useState,useContext,useEffect } from 'react';
-import { IdContext } from '../App';
-import CriarComentario from '../Telas/criarComentario';
+import { userID } from '../context/idUsuario';
+//import CriarComentario from '../Telas/criarComentario';
 import Comentario from './comentario';
 
 
@@ -26,7 +25,7 @@ function Post(props){
     const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
     const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
     const supabase = createClient(supabaseUrl, supabaseKey)
-    const[idUsuario,setIdUsuario] = useContext(IdContext);
+    const[idUsuario,setIdUsuario] = useContext(userID);
 
 
     const [abrirComentario,setAbrirComentario] = useState(false);
@@ -220,7 +219,7 @@ function Post(props){
                         style = {{width:20,height: 20,marginRight: 3}} />
                       </TouchableOpacity>
                       
-                      <TouchableOpacity style = {styles.criarComentario} onPress={()=>navigation.navigate('CriarComentario', {props: props.post, disciplina: props.disciplina})}>
+                      <TouchableOpacity style = {styles.criarComentario} onPress={()=>props.navigation.navigate('CriarComentario', {props: props.post, disciplina: props.disciplina})}>
                           <Text style ={{fontWeight: 'bold'}}>Comentar</Text>
                       </TouchableOpacity>
 
@@ -230,7 +229,7 @@ function Post(props){
                           scrollEnabled={false}
                           renderItem={({ item }) => (
                           
-                            <Comentario comentario = {item} navigation = {navigation}></Comentario>
+                            <Comentario comentario = {item} navigation = {props.navigation}></Comentario>
 
                         )}
                         />

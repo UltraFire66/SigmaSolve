@@ -2,12 +2,12 @@ import { View, Text, ScrollView, StyleSheet,Button,Image, TextInput,TouchableOpa
 import * as FileSystem from 'expo-file-system/legacy';
 import { Buffer } from 'buffer';
 import { LinearGradient } from 'expo-linear-gradient';
-import Post from '../components/post';
+//import Post from '../components/post';
 import { vh, vw } from 'react-native-css-vh-vw';
 import { React, useState, useContext,useEffect } from 'react'
 import { Feather } from '@expo/vector-icons';
 import { createClient } from '@supabase/supabase-js'
-import {IdContext} from '../App'
+import { userID } from '../context/idUsuario';
 import { useRoute } from '@react-navigation/native';
 import Menu from '../components/menu';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,7 +27,7 @@ export default function CriarComentario({navigation}){
   //const[data,setData] = useState(agora.toISOString().slice(0, 19).replace('T', ' '));
   //console.log(data);
   const[imagem,setImagem] = useState('');
-  const[idUsuario,setIdUsuario] = useContext(IdContext);
+  const[idUsuario,setIdUsuario] = useContext(userID);
   const[idTopico,setIdTopico] = useState(props.idtopico);
   const[nome,setNome] = useState('');
   const [medalhaBronze, setMedalhaBronze] = useState(false)
@@ -139,7 +139,7 @@ export default function CriarComentario({navigation}){
       else{
         const { data, error } = await supabase
         .from('comentario')
-        .insert([{ conteudotexto: conteudo, conteudoimg: publicUrl || null,  fk_topico_idtopico: idTopico}])
+        .insert([{ conteudotexto: conteudo, conteudoimg: publicUrl || null,  fk_topico_idtopico: idTopico, fk_usuario_idusuario: idUsuario, fk_comentario_idcomentario:null}])
                 
         if (error) console.error(error)
         else{
