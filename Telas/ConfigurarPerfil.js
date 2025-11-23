@@ -4,12 +4,12 @@ import Post from '../components/post';
 import { useState, useContext, useEffect } from 'react'
 import { Feather } from '@expo/vector-icons';
 import { createClient } from '@supabase/supabase-js'
-import {IdContext} from '../App'
+import { userID } from '../context/idUsuario';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function ConfigurarPerfil({navigation}){
-    const [idUsuario,setIdUsuario] = useContext(IdContext)
+    const [idUsuario,setIdUsuario] = useContext(userID)
     const [nome, setNome] = useState('');
     const [senha, setSenha] = useState('');
     const [senha1, setSenha1] = useState('');

@@ -3,13 +3,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
 import { useContext, useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
-import { IdContext } from '../App';
+import { userID } from '../context/idUsuario';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { vh, vw } from 'react-native-css-vh-vw';
 
 
 export default function Perfil({navigation}){
-    const [idUsuario,setIdUsuario] = useContext(IdContext)
+    const [idUsuario,setIdUsuario] = useContext(userID)
     const [nome, setNome] = useState('')
     const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
     const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
@@ -19,6 +19,7 @@ export default function Perfil({navigation}){
     const [medalhaOuro, setMedalhaOuro] = useState(false)
     const [medalhaMax, setMedalhaMax] = useState(false)
     const [likes, setLikes] = useState(0)
+    const [falta, setFalta] = useState(0)
 
     async function buscaNome(){
       const { data, error } = await supabase
@@ -29,13 +30,15 @@ export default function Perfil({navigation}){
       setLikes(data[0].likes)
       if(data[0].likes > 15){
         setMedalhaMax(true)
-
       }else if(data[0].likes > 10){
         setMedalhaOuro(true)
+        setFalta(15-likes)
       }else if(data[0].likes > 5){
         setMedalhaPrata(true)
+        setFalta(10-likes)
       }else{
         setMedalhaBronze(true)
+        setFalta(5-likes)
       }
       console.log(data[0].nome)
     }
@@ -72,7 +75,7 @@ export default function Perfil({navigation}){
                    </View>
                    <View style = {{justifyContent: 'center', alignItems:'center', gap: 10}}>
                         <Text style = {{color: 'white', textAlign: 'center', fontSize: 18, fontWeight: 500}}>Pontuação total do perfil: {likes} </Text>
-                        <Text style = {{color: 'white', textAlign: 'center', fontSize: 18, fontWeight: 500}}>Pontuação necessária para a próxima medalha: {medalhaMax ? '\nParabéns, você alcançou a medalha máxima!' : likes+5}</Text>
+                        <Text style = {{color: 'white', textAlign: 'center', fontSize: 18, fontWeight: 500}}>Pontuação necessária para a próxima medalha: {medalhaMax ? '\nParabéns, você alcançou a medalha máxima!' : falta}</Text>
                     </View>
 
                     <View style = {{width: '100%',marginTop: 30, color: 'black', display: 'flex', flexDirection: 'row',justifyContent: 'space-evenly'}}>

@@ -3,11 +3,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useContext, useState } from 'react'
 import { Feather } from '@expo/vector-icons';
 import { createClient } from '@supabase/supabase-js'
-import {IdContext} from '../App'
+import { userID } from '../context/idUsuario';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Cadastro({navigation}){
-    const [idUsuario,setIdUsuario] = useContext(IdContext)
+    const [idUsuario,setIdUsuario] = useContext(userID)
     const [senha, setSenha] = useState('');
     const [ocultarSenha, setOcultarSenha] = useState(true); 
     const [email,setEmail] = useState('');

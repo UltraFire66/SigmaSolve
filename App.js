@@ -3,7 +3,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StyleSheet, Text, View } from 'react-native';
-import { useState,useContext,createContext } from 'react'
+import { useState,useContext,} from 'react'
 import { vh, vw } from 'react-native-css-vh-vw';
 import Login from "./Telas/login";
 import Cadastro from "./Telas/cadastro";
@@ -14,12 +14,9 @@ import ForumDisciplina from './Telas/forumDisciplina';
 import CriarTopico from './Telas/criarTopico';
 import Topico from './Telas/Topico';
 import CriarComentario from './Telas/criarComentario';
-
+import { userID } from './context/idUsuario';
 
 const Stack = createNativeStackNavigator();
-
-export const IdContext = createContext();
-
 
 export default function App() {
 
@@ -27,7 +24,7 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <IdContext.Provider value={[idUsuario,setIdUsuario]}>
+      <userID.Provider value={[idUsuario,setIdUsuario]}>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
             <Stack.Screen name = "Login" component={Login}/>
@@ -41,7 +38,7 @@ export default function App() {
             <Stack.Screen name = "CriarComentario" component={CriarComentario}/>
           </Stack.Navigator>
         </NavigationContainer>
-      </IdContext.Provider>
+      </userID.Provider>
     </SafeAreaProvider>
   );
 }

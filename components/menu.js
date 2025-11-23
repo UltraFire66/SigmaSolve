@@ -1,12 +1,12 @@
 import {Text,Modal,View, StyleSheet, Image, Touchable, TouchableOpacity} from 'react-native';
 import {useContext, useState} from 'react';
 import { vh, vw } from 'react-native-css-vh-vw';
-import {IdContext} from '../App'
+import { userID } from '../context/idUsuario';
 
 function Menu(props){
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
-    const [idUsuario,setIdUsuario] = useContext(IdContext);
+    const [idUsuario,setIdUsuario] = useContext(userID);
 
     return(
         <>
