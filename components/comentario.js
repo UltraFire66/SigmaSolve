@@ -1,19 +1,22 @@
 import {Text,Modal,View, StyleSheet, Image, Touchable, TouchableOpacity} from 'react-native';
-import { useState,useEffect} from 'react';
+import { useState,useEffect,useContext} from 'react';
 import { vh, vw } from 'react-native-css-vh-vw';
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
+import {IdContext} from '../App';
 
 function Comentario(props){
   
   const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
   const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
   const supabase = createClient(supabaseUrl, supabaseKey)
+  const[idUsuario,setIdUsuario] = useContext(IdContext);
 
   const [medalhaBronze, setMedalhaBronze] = useState(false)
   const [medalhaPrata, setMedalhaPrata] = useState(false)
   const [medalhaOuro, setMedalhaOuro] = useState(false)
   const [medalhaMax, setMedalhaMax] = useState(false)
 
+  const [likeDado,setLikeDado] = useState();
   const[comentarios,setComentarios] = useState([]);
 
   async function buscaComentarios(){
@@ -29,6 +32,13 @@ function Comentario(props){
       
     }
 
+  async function darLike(){
+
+     const { data, error } = await supabase
+        .from('rating')
+        .insert([{ flagcurtida: 1, fk_usuario_idusuario: idUsuario , fk_comentario_idcomentario: props.comentario.idcomentario }])
+
+  }
 
   useEffect(() =>{
 

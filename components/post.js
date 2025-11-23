@@ -58,6 +58,7 @@ function Post(props){
                 conteudoimg,
                 data,
                 fk_topico_idtopico,
+                fk_usuario_idusuario,
                 likes,
                 usuario (nome,likes)
 
