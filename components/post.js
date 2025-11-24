@@ -59,7 +59,7 @@ function Post(props){
                 fk_topico_idtopico,
                 fk_usuario_idusuario,
                 likes,
-                usuario (nome,likes)
+                usuario (idusuario,nome,likes)
 
               `,{count: 'exact'})
               .eq('fk_topico_idtopico', props.post.idtopico)

@@ -2,21 +2,21 @@ import {Text,Modal,View, StyleSheet, Image, Touchable, TouchableOpacity} from 'r
 import { useState,useEffect,useContext} from 'react';
 import { vh, vw } from 'react-native-css-vh-vw';
 import { createClient } from '@supabase/supabase-js';
-import {IdContext} from '../App';
+import { userID } from '../context/idUsuario';
 
 function Comentario(props){
   
   const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
   const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
   const supabase = createClient(supabaseUrl, supabaseKey)
-  const[idUsuario,setIdUsuario] = useContext(IdContext);
+  const [idUsuario,setIdUsuario] = useContext(userID)
 
   const [medalhaBronze, setMedalhaBronze] = useState(false)
   const [medalhaPrata, setMedalhaPrata] = useState(false)
   const [medalhaOuro, setMedalhaOuro] = useState(false)
   const [medalhaMax, setMedalhaMax] = useState(false)
 
-  const [likeDado,setLikeDado] = useState();
+  const [likeDado,setLikeDado] = useState(false);
   const[comentarios,setComentarios] = useState([]);
 
   async function buscaComentarios(){
@@ -27,18 +27,70 @@ function Comentario(props){
               .from('comentario')
               .select('*',{count: 'exact'})
               .eq('fk_topico_idtopico', props.comentario.idcomentario)
-        
+      
+      console.log(data);
       setComentarios(data);
       
     }
 
+
   async function darLike(){
 
-     const { data, error } = await supabase
-        .from('rating')
-        .insert([{ flagcurtida: 1, fk_usuario_idusuario: idUsuario , fk_comentario_idcomentario: props.comentario.idcomentario }])
+    const { data:cria, error:erroCria } = await supabase
+    .from('rating')
+    .insert([{ flagcurtida: 1, fk_usuario_idusuario: idUsuario , fk_comentario_idcomentario: props.comentario.idcomentario }])
+    
+    console.log("criou o like");
+    
+    const { data:insereUsuario, error:erroInsereUsuario } = await supabase
+    .from('usuario')
+    .update({likes: (props.comentario.usuario.likes + 1)})
+    .eq('idusuario', props.comentario.usuario.idusuario)
+    .select()    
 
+    console.log("alterou likes do usuario");
+
+    const { data:insereComentario, error:erroInsereComentario } = await supabase
+    .from('comentario')
+    .update({likes: (props.comentario.likes + 1)})
+    .eq('idcomentario', props.comentario.idcomentario)
+    .select()  
+
+    console.log("alterou likes do comentario");
+    setLikeDado(true);
+    
+   
   }
+
+  async function tirarLike(){
+
+    const { data:cria, error:erroCria } = await supabase
+    .from('rating')
+    .delete()
+    .eq('fk_usuario_idusuario', idUsuario)
+    .eq('fk_comentario_idcomentario',props.comentario.idcomentario)
+    
+    console.log("deletou o like");
+    
+    const { data:insereUsuario, error:erroInsereUsuario } = await supabase
+    .from('usuario')
+    .update({likes: (props.comentario.usuario.likes - 1)})
+    .eq('idusuario', props.comentario.usuario.idusuario)
+    .select()    
+
+    console.log("tirou likes do usuario");
+
+    const { data:insereComentario, error:erroInsereComentario } = await supabase
+    .from('comentario')
+    .update({likes: (props.comentario.likes - 1)})
+    .eq('idcomentario', props.comentario.idcomentario)
+    .select()  
+
+    console.log("tirou likes do comentario");
+    setLikeDado(false);
+      
+  }
+
 
   useEffect(() =>{
 
@@ -82,13 +134,30 @@ function Comentario(props){
 
                   </TouchableOpacity>
 
-                  <TouchableOpacity style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
+                  {likeDado ? (
+
+                  <TouchableOpacity onPress =  {()=> {tirarLike()}} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
+                    
+                    <Image source = {require("../assets/icones/iconeLikePreenchido.png")}
+                    style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
+                    <Text style = {{color: 'black',fontSize: 13}}>{props.comentario.likes}</Text>
+
+                  </TouchableOpacity>
+
+
+                  ) :
+                  
+                  (
+
+                  <TouchableOpacity onPress =  {()=> {darLike()}} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
                     
                     <Image source = {require("../assets/icones/iconeLike.png")}
                     style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
                     <Text style = {{color: 'black',fontSize: 13}}>{props.comentario.likes}</Text>
 
                   </TouchableOpacity>
+
+                  )}
                 </View>
            </View>
         </>
@@ -107,7 +176,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9D9D9',
     borderRadius: 27,
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    marginVertical: vh(2)
   },
   
    usuario:{
