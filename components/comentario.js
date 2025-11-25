@@ -17,11 +17,11 @@ function Comentario(props){
   const [medalhaMax, setMedalhaMax] = useState(false)
 
   const [likeDado,setLikeDado] = useState(false);
-  const[comentarios,setComentarios] = useState([]);
+  const [deuLike,setDeuLike] = useState(0);
+  const [comentarios,setComentarios] = useState([]);
 
   async function buscaComentarios(){
 
-      //setModalVisible(true);
 
       const { data, error } = await supabase
               .from('comentario')
@@ -32,6 +32,24 @@ function Comentario(props){
       setComentarios(data);
       
     }
+
+  async function buscaLike(){
+
+    const { data, error } = await supabase
+              .from('rating')
+              .select('*',{count: 'exact'})
+              .eq('fk_usuario_idusuario', idUsuario )
+              .eq('fk_comentario_idcomentario', props.comentario.idcomentario)
+              .maybeSingle()
+
+    if(data)
+      setLikeDado(true);
+    else
+      setLikeDado(false);
+
+    
+
+  }
 
 
   async function darLike(){
@@ -58,7 +76,7 @@ function Comentario(props){
 
     console.log("alterou likes do comentario");
     setLikeDado(true);
-    
+    setDeuLike(1);
    
   }
 
@@ -88,6 +106,7 @@ function Comentario(props){
 
     console.log("tirou likes do comentario");
     setLikeDado(false);
+    setDeuLike((-1));
       
   }
 
@@ -95,6 +114,7 @@ function Comentario(props){
   useEffect(() =>{
 
     buscaComentarios();
+    buscaLike()
     console.log(props.comentario)
 
     if(props.comentario.usuario.likes > 15){
@@ -110,7 +130,7 @@ function Comentario(props){
   },[])
 
     return(
-        <>
+        
            <View style = {styles.fundo}>
                 <View style = {styles.usuario}>
 
@@ -124,7 +144,13 @@ function Comentario(props){
 
                 <Text style = {{fontSize: 14,fontWeight: 'bold',width: '95%',padding:'5%'}}
               >{props.comentario.conteudotexto}</Text>
-            
+              
+              <view style = {{width:'100%',height:"100%",display:'flex',justifyContent:'center'}}>
+
+                 {props.comentario.conteudoimg && <Image source={{uri: props.comentario.conteudoimg}} resizeMode="stretch" style = {{width:vw(50),height: vh(20)}}/>}
+
+              </view>
+
                 <View style = {styles.opcoes}>
                     <TouchableOpacity style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
                     
@@ -140,7 +166,7 @@ function Comentario(props){
                     
                     <Image source = {require("../assets/icones/iconeLikePreenchido.png")}
                     style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
-                    <Text style = {{color: 'black',fontSize: 13}}>{props.comentario.likes}</Text>
+                    <Text style = {{color: 'black',fontSize: 13}}>{props.comentario.likes + deuLike}</Text>
 
                   </TouchableOpacity>
 
@@ -153,14 +179,14 @@ function Comentario(props){
                     
                     <Image source = {require("../assets/icones/iconeLike.png")}
                     style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
-                    <Text style = {{color: 'black',fontSize: 13}}>{props.comentario.likes}</Text>
+                    <Text style = {{color: 'black',fontSize: 13}}>{props.comentario.likes + deuLike}</Text>
 
                   </TouchableOpacity>
 
                   )}
                 </View>
            </View>
-        </>
+        
     )
 }
 
