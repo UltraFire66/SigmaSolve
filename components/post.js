@@ -89,16 +89,36 @@ function Post(props){
     }
 
     async function realizarDenuncia(){
+      const { data: insereDenuncia, error: erroDenuncia} = await supabase
+        .from('denunciatopico')
+        .insert([{ flagdenuncia: true, fk_usuario_idusuario: idUsuario, fk_topico_idtopico: props.post.idtopico}])
       
-        const { data, error } = await supabase
-          .from('denunciatopico')
-          .insert([{ flagdenuncia: true, fk_usuario_idusuario: idUsuario, fk_topico_idtopico: props.post.idtopico}])
-          if (error) console.error(error)
-          else{
-            Alert.alert('Denúncia cadastrada com sucesso!')
-            //setar modal falso fechar
-          }
-   
+      if (erroDenuncia) console.error(erroDenuncia)
+        else{
+          Alert.alert('Denúncia cadastrada com sucesso!')
+          //setar modal falso fechar
+        }
+      const { data: countDenuncia, error: errorCount } = await supabase
+        .from('denunciatopico')
+        .select('*',{count: 'exact'})
+        .eq('fk_topico_idtopico', props.post.idtopico)
+        
+      if (errorCount) console.error(errorCount)
+        else{
+          console.log(countDenuncia.length)
+        }
+          
+      if(countDenuncia.length>14){
+        const { data: updateFlag, error: errorFlag } = await supabase
+          .from('topico')
+          .update({flagdenunciado: true})
+          .eq('idtopico', props.post.idtopico)
+        
+        if (errorFlag) console.error(errorFlag)
+        else{
+          console.log('Tópico enviado para análise.')
+        }
+      }
     }
 
     async function retirarDenuncia(){
