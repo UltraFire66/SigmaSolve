@@ -2,7 +2,7 @@ import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, Tex
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
 import { useContext, useState, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '../context/supabase';
 import { userID } from '../context/idUsuario';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { vh, vw } from 'react-native-css-vh-vw';
@@ -11,9 +11,6 @@ import { vh, vw } from 'react-native-css-vh-vw';
 export default function Perfil({navigation}){
     const [idUsuario,setIdUsuario] = useContext(userID)
     const [nome, setNome] = useState('')
-    const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
-    const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
-    const supabase = createClient(supabaseUrl, supabaseKey)
     const [medalhaBronze, setMedalhaBronze] = useState(false)
     const [medalhaPrata, setMedalhaPrata] = useState(false)
     const [medalhaOuro, setMedalhaOuro] = useState(false)

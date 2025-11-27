@@ -1,21 +1,16 @@
 import {Text,Modal,View, StyleSheet, Image, Touchable, TouchableOpacity} from 'react-native';
 import { useState,useEffect,useContext} from 'react';
 import { vh, vw } from 'react-native-css-vh-vw';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../context/supabase';
 import { userID } from '../context/idUsuario';
 
 function Comentario(props){
-  
-  const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
-  const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
-  const supabase = createClient(supabaseUrl, supabaseKey)
-  const [idUsuario,setIdUsuario] = useContext(userID)
 
+  const [idUsuario,setIdUsuario] = useContext(userID)
   const [medalhaBronze, setMedalhaBronze] = useState(false)
   const [medalhaPrata, setMedalhaPrata] = useState(false)
   const [medalhaOuro, setMedalhaOuro] = useState(false)
   const [medalhaMax, setMedalhaMax] = useState(false)
-
   const [likeDado,setLikeDado] = useState(false);
   const [deuLike,setDeuLike] = useState(0);
   const [comentarios,setComentarios] = useState([]);

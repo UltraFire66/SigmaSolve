@@ -20,7 +20,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
 
-  const [idUsuario, setIdUsuario] = useState(0);
+  const [idUsuario, setIdUsuario] = useState(null);
 
   return (
     <SafeAreaProvider>

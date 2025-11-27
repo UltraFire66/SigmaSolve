@@ -3,7 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Disciplina from '../components/disciplina';
 import Menu from '../components/menu';
 import { useContext, useState, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '../context/supabase';
 import { userID } from '../context/idUsuario';
 import { vh, vw } from 'react-native-css-vh-vw';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,9 +16,6 @@ export default function Home({navigation}){
   const [medalhaPrata, setMedalhaPrata] = useState(false)
   const [medalhaOuro, setMedalhaOuro] = useState(false)
   const [medalhaMax, setMedalhaMax] = useState(false)
-  const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
-  const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
-  const supabase = createClient(supabaseUrl, supabaseKey)
 
   async function buscaNome(){
     const { data, error } = await supabase

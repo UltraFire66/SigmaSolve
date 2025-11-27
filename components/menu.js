@@ -39,7 +39,7 @@ function Menu(props){
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>{
                         setModalVisible(false);
-                        setIdUsuario(0);
+                        setIdUsuario(null);
                         props.navigation.navigate('Login')}}>
                         <Text style={{fontWeight:600, fontSize:18}}>
                             Sair

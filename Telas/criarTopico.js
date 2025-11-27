@@ -6,7 +6,7 @@ import Post from '../components/post';
 import { vh, vw } from 'react-native-css-vh-vw';
 import { React, useState, useContext,useEffect } from 'react'
 import { Feather } from '@expo/vector-icons';
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '../context/supabase';
 import { userID } from '../context/idUsuario';
 import { useRoute } from '@react-navigation/native';
 import Menu from '../components/menu';
@@ -38,12 +38,6 @@ export default function CriarTopico({navigation}){
   const [imageUri, setImageUri] = useState(null);
   const [uploadedUrl, setUploadedUrl] = useState('');
   const [asset, setAsset] = useState('');
-
-  const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
-  const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
-  const supabase = createClient(supabaseUrl, supabaseKey)
-
-
 
   const pickImage = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();

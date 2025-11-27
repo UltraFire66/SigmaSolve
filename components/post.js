@@ -1,6 +1,6 @@
 import {Text,View, StyleSheet, Image, Modal, Touchable, TouchableOpacity, Alert, ActivityIndicator,FlatList} from 'react-native';
 import { vh, vw } from 'react-native-css-vh-vw';
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '../context/supabase';
 import { useState,useContext,useEffect } from 'react';
 import { userID } from '../context/idUsuario';
 //import CriarComentario from '../Telas/criarComentario';
@@ -9,28 +9,15 @@ import Comentario from './comentario';
 
 function Post(props){
 
-    const [modalVisible,setModalVisible] = useState(false);
-
+  const [modalVisible,setModalVisible] = useState(false);
     const [checaDenuncia,setChecaDenuncia] = useState();
     const [carregandoDenuncia,setCarregandoDenuncia] = useState(false);
-
-
     const [textoDenuncia,setTextoDenuncia] = useState();
-
     const [comentarios,setComentarios] = useState([]);
     const [numComentarios,setNumComentarios] = useState();
     const [carregandoComentarios,setCarregandoComentarios] = useState(false);
-
-
-    const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
-    const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
-    const supabase = createClient(supabaseUrl, supabaseKey)
-    const[idUsuario,setIdUsuario] = useContext(userID);
-
-
+    const [idUsuario,setIdUsuario] = useContext(userID);
     const [abrirComentario,setAbrirComentario] = useState(false);
-
-    
 
     async function buscaNumComentario(){
 

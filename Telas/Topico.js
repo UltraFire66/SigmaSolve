@@ -2,7 +2,7 @@ import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, Tex
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
 import { useContext, useState, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '../context/supabase';
 import { useRoute } from '@react-navigation/native';
 import { userID } from '../context/idUsuario';
 import Menu from '../components/menu';
@@ -13,9 +13,6 @@ import { vh, vw } from 'react-native-css-vh-vw';
 export default function Topico({navigation}){
   const [idUsuario,setIdUsuario] = useContext(userID)
   const [nome, setNome] = useState('')
-  const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
-  const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
-  const supabase = createClient(supabaseUrl, supabaseKey)
   const route = useRoute();
   const {props} = route.params;
   const [posts,setPosts] = useState([]);
