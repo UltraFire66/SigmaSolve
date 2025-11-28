@@ -11,7 +11,7 @@ import { vh, vw } from 'react-native-css-vh-vw';
 import { useFocusEffect } from '@react-navigation/native';
 
 
-export default function Home({navigation}){
+export default function ForumDisciplina({navigation}){
   const [idUsuario,setIdUsuario] = useContext(userID)
   const [nome, setNome] = useState('')
   const route = useRoute();
@@ -31,6 +31,7 @@ export default function Home({navigation}){
             .select('*')
             .eq('idusuario', idUsuario)
     setNome(data[0].nome)
+    
     if(data[0].likes > 15){
       setMedalhaMax(true)
     }else if(data[0].likes > 10){

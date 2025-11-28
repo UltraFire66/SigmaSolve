@@ -2,7 +2,7 @@ import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, Tex
 import { LinearGradient } from 'expo-linear-gradient';
 import Disciplina from '../components/disciplina';
 import Menu from '../components/menu';
-import { useContext, useState, useEffect } from 'react'
+import { useContext, useState, useEffect, use } from 'react'
 import { supabase } from '../context/supabase';
 import { userID } from '../context/idUsuario';
 import { vh, vw } from 'react-native-css-vh-vw';
@@ -16,6 +16,7 @@ export default function Home({navigation}){
   const [medalhaPrata, setMedalhaPrata] = useState(false)
   const [medalhaOuro, setMedalhaOuro] = useState(false)
   const [medalhaMax, setMedalhaMax] = useState(false)
+  const [ehAdmin, setEhAdmin] = useState(false)
 
   async function buscaNome(){
     const { data, error } = await supabase
@@ -32,6 +33,14 @@ export default function Home({navigation}){
     }else{
       setMedalhaBronze(true)
     }
+
+    
+    if(data[0].email == 'admin'){
+      setEhAdmin(true)
+    }else{
+      console.log('não é o admin')
+    }
+
     console.log(data[0].nome)
   }
 
@@ -82,12 +91,18 @@ export default function Home({navigation}){
                 >
                   <View style = {styles.topoTela}>
 
-                    <Text style = {styles.titulo}>Disciplinas</Text>              
+                    {ehAdmin ? 
+                    (<>
+                      <Text style = {styles.titulo}>Disciplina</Text>
+                      <TouchableOpacity style = {styles.criarTopico} onPress={()=>navigation.navigate('AdicionarDisciplina', {fromScreen: 'Home'})}>
+                        <Text style = {{fontWeight: 'bold', textAlign: 'center'}}>Adicionar Disciplinas</Text>
+                      </TouchableOpacity>
+                    </>) : (<Text style = {styles.titulo}>Disciplinas</Text>)}              
 
                   </View>
 
                   <View style={{width:"90%", height:"80%", alignItems:'center', justifyContent:'center'}}>
-                    <ScrollView style={{width:"100%", height:'100%'}}>
+                    <ScrollView style={[{width:"100%", height:"100%"}, ehAdmin ? {marginBottom: vh(10)} : '']}>
                       <FlatList
                         data={disciplinas}
                         keyExtractor={(item) => item.idDisciplina.toString()}
@@ -154,8 +169,8 @@ const styles = StyleSheet.create({
   },
   criarTopico: {
     backgroundColor: 'white',
-    width: '25%',
-    height: '90%',
+    width: vw(25),
+    height: vh(6),
     borderRadius: 20,
     fontSize: 15,
     fontWeight: 'bold',
@@ -163,9 +178,7 @@ const styles = StyleSheet.create({
     textAlign:'center',
     alignItems: 'center',
     justifyContent: 'center',
-    whiteSpace: 'nowrap',
-    marginRight: '6%',
-    
+    whiteSpace: 'nowrap',   
   },
   usuario:{
     display:'flex',

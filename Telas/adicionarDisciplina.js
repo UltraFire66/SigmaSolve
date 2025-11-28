@@ -1,102 +1,25 @@
 import { View, Text, ScrollView, StyleSheet,Button,Image, TextInput,TouchableOpacity, Touchable, Alert} from 'react-native';
-import * as FileSystem from 'expo-file-system/legacy';
-import { Buffer } from 'buffer';
 import { LinearGradient } from 'expo-linear-gradient';
-import Post from '../components/post';
 import { vh, vw } from 'react-native-css-vh-vw';
 import { React, useState, useContext,useEffect } from 'react'
-import { Feather } from '@expo/vector-icons';
 import { supabase } from '../context/supabase';
 import { userID } from '../context/idUsuario';
-import { useRoute } from '@react-navigation/native';
 import Menu from '../components/menu';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as ImagePicker from 'expo-image-picker';
+import { useRoute } from '@react-navigation/native';
 
-export default function CriarTopico({navigation}){
-  
-  const agora = new Date().toLocaleString('af-ZA',{timeZone: 'America/Sao_Paulo'});
-  //console.log(agora.slice(0,20).replaceAll('/','-').replace(',',''));
+
+export default function AdicionarDisciplina({navigation}){
+  const[codDisciplina,setCodDisciplina] = useState('');
+  const[nomeDisciplina,setNomeDisciplina]= useState('');
+  const[idUsuario,setIdUsuario] = useContext(userID);
   const route = useRoute();
-  const {item} = route.params;
-  console.log(item)
-  const [titulo,setTitulo] = useState('');
-  const [conteudo,setConteudo]= useState('');
-  const [horario,setHorario] = useState(agora.slice(0,20).replaceAll('/','-').replace(',',''));
-  //const[data,setData] = useState(agora.toISOString().slice(0, 19).replace('T', ' '));
-  //console.log(data);
-  const [imagem,setImagem] = useState('');
-  const [idUsuario,setIdUsuario] = useContext(userID);
-  const [codDisciplina,setCodDisciplina] = useState(item.coddisciplina);
   const [nome,setNome] = useState('');
   const [medalhaBronze, setMedalhaBronze] = useState(false)
   const [medalhaPrata, setMedalhaPrata] = useState(false)
   const [medalhaOuro, setMedalhaOuro] = useState(false)
   const [medalhaMax, setMedalhaMax] = useState(false)
 
-  const [uploading, setUploading] = useState(false);
-  const [imageUri, setImageUri] = useState(null);
-  const [uploadedUrl, setUploadedUrl] = useState('');
-  const [asset, setAsset] = useState('');
-
-  const pickImage = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) {
-      alert('Permita o acesso à galeria para escolher uma imagem.');
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
-      setAsset(result.assets[0]);
-    }
-  };
-
-  
-  const uploadImageToSupabase = async (asset) => {
-    try {
-      setUploading(true);
-
-      const { uri, fileName, mimeType } = asset;
-      const fileExt = fileName?.split('.').pop() ?? 'jpg';
-      const newFileName = `${Date.now()}.${fileExt}`;
-      const filePath = `public/${newFileName}`;
-
-      // Lê o arquivo local como base64
-      const base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' });
-
-      // Converte para bytes
-      const bytes = Buffer.from(base64, 'base64');
-
-      // Faz upload para o bucket do Supabase
-      const { data, error } = await supabase.storage
-        .from('imagens')
-        .upload(filePath, bytes, {
-          contentType: mimeType || `image/${fileExt}`,
-          upsert: false,
-        });
-
-      if (error) throw error;
-
-      const publicUrl = `${supabaseUrl}/storage/v1/object/public/imagens/${filePath}`;
-      setUploadedUrl(publicUrl);
-
-      console.log('Upload concluído:', publicUrl);
-      return publicUrl;
-    } catch (err) {
-      console.error('Erro no upload:', err);
-      alert('Erro ao enviar imagem.');
-      return null;
-    } finally {
-      setUploading(false);
-    }
-  };
-  
   async function buscaNome(){
     const { data, error } = await supabase
             .from('usuario')
@@ -118,30 +41,30 @@ export default function CriarTopico({navigation}){
   useEffect(() => {
     buscaNome()
   }, [])
-    
-  console.log(route.params)
+
   async function handleInsert(){
-      let publicUrl = '';
-      if (asset) {
-        publicUrl = await uploadImageToSupabase(asset);
-      }
-      if(conteudo == '' || titulo == ''){
+
+      if(codDisciplina == '' || nomeDisciplina == ''){
         Alert.alert('Os campos devem estar preenchidos!');
         console.log('Os campos devem estar preenchidos!');
       }
       else{
         const { data, error } = await supabase
-        .from('topico')
-        .insert([{ conteudotexto: conteudo, conteudoimg: publicUrl || null, titulotopico: titulo, fk_usuario_idusuario: idUsuario, fk_disciplina_coddisciplina: codDisciplina }])
+        .from('disciplina')
+        .insert([{ coddisciplina: codDisciplina.toUpperCase(), nomedisciplina: nomeDisciplina }])
                 
-        if (error) console.error(error)
+        if (error){
+          if(error.code == 23505){
+            Alert.alert('Já existe uma disciplina com esse código.')
+          }
+          console.error(error)
+        } 
         else{
-          Alert.alert('Topico Criado com sucesso!');
-          console.log('Topico Criado com sucesso!');
+          Alert.alert('Disiplina Adicionada com sucesso!');
+          console.log('Disiplina Adicionada com sucesso!');
 
           navigation.navigate({
             name: route.params?.fromScreen,
-            params: { item: route.params?.item, atualizar: true },
             merge: true,
           });
         }
@@ -189,23 +112,19 @@ export default function CriarTopico({navigation}){
                     </View>
                     <View style = {{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
 
-                          <Text style = {{color: 'white',fontSize: 25, fontWeight: 'bold',paddingVertical:20, textAlign: 'center',}}>{item.nomedisciplina}</Text>
+                          <Text style = {{color: 'white',fontSize: 25, fontWeight: 'bold',paddingVertical:20, textAlign: 'center',}}>Adicionar Disciplina</Text>
 
                     </View> 
 
                       <View style={{width: vw(85), backgroundColor: '#336699', borderRadius: 27, paddingVertical: 30, alignItems: 'center', marginBottom:vh(5)}}>
                           <View style={{width: '100%', backgroundColor: '#D9D9D9', gap: 10, alignItems: 'center'}}>
-                            <Text style = {styles.titulo}>Título do Tópico</Text>
-                            <TextInput style = {styles.inputTitulo} value={titulo} onChangeText={setTitulo}/>
-                            <Text style = {styles.titulo}>Conteúdo da postagem</Text>
-                            <TextInput  multiline={true} style = {styles.inputConteudo} value={conteudo} onChangeText={setConteudo}/>
-                            {imageUri && (<Image source={{uri: imageUri}} resizeMode='contain' style={{width:vw(50), height:vh(50)}}/>)}
-                            <TouchableOpacity style = {styles.anexarImagem} onPress={pickImage}>
-                              <Text  style = {{color: '#0066FF'}}>Anexar Imagens</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style = {styles.criarTopico} onPress={() => {handleInsert()}}>
+                            <Text style = {[styles.titulo, {marginTop: vh(2)}]}>Código da Disciplina</Text>
+                            <TextInput style = {styles.inputTitulo} value={codDisciplina} onChangeText={setCodDisciplina}/>
+                            <Text style = {styles.titulo}>Nome da Disciplina</Text>
+                            <TextInput style = {styles.inputTitulo} value={nomeDisciplina} onChangeText={setNomeDisciplina}/>
+                            <TouchableOpacity style = {[styles.criarTopico, {marginTop: vh(10), marginBottom: vh(4)}]} onPress={() => {handleInsert()}}>
                               <LinearGradient style={[{height:"100%", width:'100%', alignItems: 'center', justifyContent:'space-around', flexDirection:'row', borderRadius:20}]} colors={['#0066FF','#00AACC']} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }}>
-                                <Text style={{color:'white'}}>Criar Tópico</Text>
+                                <Text style={{color:'white'}}>Adicionar Disciplina</Text>
                               </LinearGradient>
                             </TouchableOpacity>
                           </View>
