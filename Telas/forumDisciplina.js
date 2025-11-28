@@ -9,6 +9,7 @@ import Menu from '../components/menu';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { vh, vw } from 'react-native-css-vh-vw';
 import { useFocusEffect } from '@react-navigation/native';
+import { Feather } from '@expo/vector-icons';
 
 
 export default function ForumDisciplina({navigation}){
@@ -53,6 +54,8 @@ export default function ForumDisciplina({navigation}){
               conteudoimg,
               titulotopico,
               datacriacao,
+              urlPDF,
+              nomePdf,
               usuario (nome)
               `, { count: 'exact'})
             .eq('flagdenunciado', false)

@@ -1,8 +1,9 @@
-import {Text,Modal,View, StyleSheet, Image, Touchable, TouchableOpacity} from 'react-native';
+import {Text,Modal,View, StyleSheet, Image, Touchable, TouchableOpacity, Linking} from 'react-native';
 import { useState,useEffect,useContext} from 'react';
 import { vh, vw } from 'react-native-css-vh-vw';
 import { supabase } from '../context/supabase';
 import { userID } from '../context/idUsuario';
+import { Feather } from '@expo/vector-icons';
 
 function Comentario(props){
 
@@ -141,6 +142,14 @@ function Comentario(props){
           
           <View style = {{display:'flex',justifyContent:'center', alignItems: 'center'}}>
               {props.comentario.conteudoimg && <Image source={{uri: props.comentario.conteudoimg}} resizeMode="stretch" style = {{width:vw(50),height: vh(20)}}/>}
+              {props.comentario.urlPDF && 
+                <TouchableOpacity onPress = {() => Linking.openURL(props.comentario.urlPDF)}>
+                  <Feather name = 'file-text' size={100} color="black" />
+                  <Text style={{ fontWeight: "bold", marginBottom: 10, textAlign: 'center' }}>
+                    {props.comentario.nomePdf}
+                  </Text>
+                </TouchableOpacity>
+              }
           </View>
 
           <View style = {styles.opcoes}>

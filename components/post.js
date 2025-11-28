@@ -1,15 +1,16 @@
-import {Text,View, StyleSheet, Image, Modal, Touchable, TouchableOpacity, Alert, ActivityIndicator,FlatList} from 'react-native';
+import {Text,View, StyleSheet, Image, Modal, Touchable, TouchableOpacity, Alert, ActivityIndicator,FlatList, Linking} from 'react-native';
 import { vh, vw } from 'react-native-css-vh-vw';
 import { supabase } from '../context/supabase';
 import { useState,useContext,useEffect } from 'react';
 import { userID } from '../context/idUsuario';
 //import CriarComentario from '../Telas/criarComentario';
 import Comentario from './comentario';
+import { Feather } from '@expo/vector-icons';
 
 
 function Post(props){
 
-  const [modalVisible,setModalVisible] = useState(false);
+    const [modalVisible,setModalVisible] = useState(false);
     const [checaDenuncia,setChecaDenuncia] = useState();
     const [carregandoDenuncia,setCarregandoDenuncia] = useState(false);
     const [textoDenuncia,setTextoDenuncia] = useState();
@@ -46,6 +47,8 @@ function Post(props){
                 fk_topico_idtopico,
                 fk_usuario_idusuario,
                 likes,
+                urlPDF,
+                nomePdf,
                 usuario (idusuario,nome,likes)
 
               `,{count: 'exact'})
@@ -205,7 +208,18 @@ function Post(props){
 
               <Text style = {{fontSize: 14,fontWeight: 'bold',width: '95%',padding:'5%'}}
               >{props.post.conteudotexto}</Text>
-              {props.post.conteudoimg && (<Image source={{uri: props.post.conteudoimg}} resizeMode='stretch' style={{width:vw(50), height:vh(20), marginBottom:vh(1)}}/>)}
+              <View style = {{display:'flex',justifyContent:'center', alignItems: 'center'}}>
+                {props.post.conteudoimg && <Image source={{uri: props.post.conteudoimg}} resizeMode="stretch" style = {{width:vw(50),height: vh(20)}}/>}
+                {props.post.urlPDF && 
+                  <TouchableOpacity onPress = {() => Linking.openURL(props.post.urlPDF)}>
+                    <Feather name = 'file-text' size={100} color="black" />
+                    <Text style={{ fontWeight: "bold", marginBottom: 10, textAlign: 'center' }}>
+                      {props.post.nomePdf}
+                    </Text>
+                  </TouchableOpacity>
+
+                }
+              </View>
             </View>
               {abrirComentario 
             

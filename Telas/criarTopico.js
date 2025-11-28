@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet,Button, Modal, Image, TextInput,TouchableOpacity, Touchable, Alert} from 'react-native';
+import { View, Text, ScrollView, StyleSheet,Button, Modal, Image, TextInput,TouchableOpacity, Touchable, Alert, Linking, Platform } from 'react-native';
 import * as FileSystem from 'expo-file-system/legacy';
 import { Buffer } from 'buffer';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -12,6 +12,8 @@ import { useRoute } from '@react-navigation/native';
 import Menu from '../components/menu';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from "expo-document-picker";
+import * as IntentLauncher from 'expo-intent-launcher';
 
 export default function CriarTopico({navigation}){
   
@@ -34,13 +36,119 @@ export default function CriarTopico({navigation}){
   const [medalhaOuro, setMedalhaOuro] = useState(false)
   const [medalhaMax, setMedalhaMax] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
-
-  const [uploading, setUploading] = useState(false);
+  const [uploadingImg, setUploadingImg] = useState(false);
   const [imageUri, setImageUri] = useState(null);
-  const [uploadedUrl, setUploadedUrl] = useState('');
+  const [uploadedUrlImg, setUploadedUrlImg] = useState('');
   const [asset, setAsset] = useState('');
+  const [selectedPdf, setSelectedPdf] = useState(null);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [uploadedUrlPdf, setUploadedUrlPdf] = useState(null);
+  const [ehPDF, setEhPDF] = useState(null);
+
+  async function openLocalPdf(uri) {
+    if (Platform.OS === 'android') {
+      const contentUri = await FileSystem.getContentUriAsync(uri);
+      IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
+        data: contentUri,
+        flags: 1,
+        type: 'application/pdf',
+      });
+    } else {
+      Linking.openURL(uri); // iOS abre diretamente
+    }
+  }
+
+  async function pickPDF() {
+    setEhPDF(true)
+    const result = await DocumentPicker.getDocumentAsync({
+      type: "application/pdf",
+    });
+
+    if (result.canceled) return;
+
+    const file = result.assets[0];
+
+    setSelectedPdf(file);
+    setUploadedUrlPdf(null);
+    setModalVisible(false)
+  }
+
+  async function uriToBlob(uri) {
+    try {
+      const base64File = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const byteCharacters = atob(base64File);
+      const byteArrays = [];
+
+      for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+        const slice = byteCharacters.slice(offset, offset + 512);
+        const byteNumbers = new Array(slice.length);
+
+        for (let i = 0; i < slice.length; i++) {
+          byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        byteArrays.push(new Uint8Array(byteNumbers));
+      }
+
+      return new Blob(byteArrays, { type: "application/pdf" });
+    } catch (err) {
+      console.log("Erro ao converter URI para blob:", err);
+      return null;
+    }
+  }
+
+  async function uploadPDF() {
+    if (!selectedPdf) return null;
+
+    setUploadingPdf(true);
+
+    try {
+      const filePath = `pdfs/${Date.now()}-${selectedPdf.name}`;
+
+      // Ler o arquivo do dispositivo como base64
+      const base64 = await FileSystem.readAsStringAsync(selectedPdf.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      // Transformar base64 em Uint8Array
+      const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+
+      const { data, error } = await supabase.storage
+        .from("imagens")
+        .upload(filePath, bytes, {
+          contentType: "application/pdf",
+          upsert: false,
+        });
+
+      if (error) {
+        console.log("Erro no upload:", error);
+        Alert.alert("Erro no upload", error.message);
+        setUploadingPdf(false);
+        return null;
+      }
+
+      const { data: urlData } = supabase.storage
+        .from("imagens")
+        .getPublicUrl(filePath);
+
+      setUploadedUrlPdf(urlData.publicUrl);
+      setUploadingPdf(false);
+
+      return urlData.publicUrl;
+
+    } catch (err) {
+      console.log("Erro ao enviar PDF:", err);
+      setUploadingPdf(false);
+      return null;
+    }
+  }
+
 
   const pickImage = async () => {
+    setEhPDF(false)
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
       alert('Permita o acesso à galeria para escolher uma imagem.');
@@ -62,20 +170,14 @@ export default function CriarTopico({navigation}){
   
   const uploadImageToSupabase = async (asset) => {
     try {
-      setUploading(true);
-
+      setUploadingImg(true);
       const { uri, fileName, mimeType } = asset;
       const fileExt = fileName?.split('.').pop() ?? 'jpg';
       const newFileName = `${Date.now()}.${fileExt}`;
-      const filePath = `public/${newFileName}`;
-
-      // Lê o arquivo local como base64
+      const filePath = `imagens/${newFileName}`;
       const base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' });
-
-      // Converte para bytes
       const bytes = Buffer.from(base64, 'base64');
 
-      // Faz upload para o bucket do Supabase
       const { data, error } = await supabase.storage
         .from('imagens')
         .upload(filePath, bytes, {
@@ -85,17 +187,17 @@ export default function CriarTopico({navigation}){
 
       if (error) throw error;
 
-      const publicUrl = `https://uqwqhxadgzwrcarwuxmn.supabase.co/storage/v1/object/public/imagens/${filePath}`;
-      setUploadedUrl(publicUrl);
+      const publicUrlImg = `https://uqwqhxadgzwrcarwuxmn.supabase.co/storage/v1/object/imagens/${filePath}`;
+      setUploadedUrlImg(publicUrlImg);
 
-      console.log('Upload concluído:', publicUrl);
-      return publicUrl;
+      console.log('Upload concluído:', publicUrlImg);
+      return publicUrlImg;
     } catch (err) {
       console.error('Erro no upload:', err);
       alert('Erro ao enviar imagem.');
       return null;
     } finally {
-      setUploading(false);
+      setUploadingImg(false);
     }
   };
   
@@ -123,10 +225,21 @@ export default function CriarTopico({navigation}){
     
   console.log(route.params)
   async function handleInsert(){
-      let publicUrl = '';
-      if (asset) {
-        publicUrl = await uploadImageToSupabase(asset);
+      let publicUrlImg = null;
+      let publicUrlPdf = null;
+      let nomePdf = null;
+      if(ehPDF){
+        if(selectedPdf){
+        publicUrlPdf = await uploadPDF()
+        nomePdf = selectedPdf.name
+        console.log(publicUrlPdf)
       }
+      }else{
+        if (asset) {
+          publicUrlImg = await uploadImageToSupabase(asset);
+        }
+      }
+
       if(conteudo == '' || titulo == ''){
         Alert.alert('Os campos devem estar preenchidos!');
         console.log('Os campos devem estar preenchidos!');
@@ -134,7 +247,7 @@ export default function CriarTopico({navigation}){
       else{
         const { data, error } = await supabase
         .from('topico')
-        .insert([{ conteudotexto: conteudo, conteudoimg: publicUrl || null, titulotopico: titulo, fk_usuario_idusuario: idUsuario, fk_disciplina_coddisciplina: codDisciplina }])
+        .insert([{ conteudotexto: conteudo, nomePdf: nomePdf || null, conteudoimg: publicUrlImg || null, urlPDF: publicUrlPdf || null, titulotopico: titulo, fk_usuario_idusuario: idUsuario, fk_disciplina_coddisciplina: codDisciplina }])
                 
         if (error) console.error(error)
         else{
@@ -201,7 +314,20 @@ export default function CriarTopico({navigation}){
                           <TextInput style = {styles.inputTitulo} value={titulo} onChangeText={setTitulo}/>
                           <Text style = {styles.titulo}>Conteúdo da postagem</Text>
                           <TextInput  multiline={true} style = {styles.inputConteudo} value={conteudo} onChangeText={setConteudo}/>
-                          {imageUri && (<Image source={{uri: imageUri}} resizeMode='contain' style={{width:vw(50), height:vh(50)}}/>)}
+                          {ehPDF ? (selectedPdf && (
+                            <View style={{ marginBottom: vh(1), alignItems: 'center', justifyContent:'center' }}>
+                              <Text style={{ fontSize: 16, marginTop: vh(1), marginBottom: vh(1) }}>
+                                PDF selecionado:
+                              </Text>
+                              <Feather name = 'file-text' size={100} color="black" />
+                              <Text style={{ fontWeight: "bold", marginBottom: 10, textAlign: 'center' }}>
+                                {selectedPdf.name}
+                              </Text>
+                              <TouchableOpacity style = {[styles.anexarImagem, {width: vw(30)}]} onPress={() => openLocalPdf(selectedPdf.uri)}>
+                                <Text style = {{color: '#0066FF'}} >Abrir prévia</Text>
+                              </TouchableOpacity>
+                            </View>
+                          )) : (imageUri && (<Image source={{uri: imageUri}} resizeMode='contain' style={{width:vw(50), height:vh(50)}}/>))}
                           <TouchableOpacity style = {styles.anexarImagem} onPress={() => setModalVisible(true)}>
                             <Text  style = {{color: '#0066FF'}}>Anexar Imagem ou Arquivo PDF</Text>
                           </TouchableOpacity>
@@ -218,7 +344,7 @@ export default function CriarTopico({navigation}){
                                     </Text>
                                     <Feather name = 'image' size={50} color="white" />
                                   </TouchableOpacity>
-                                  <TouchableOpacity style={{backgroundColor:'#78ABC6', borderRadius:15, width: vw(25), height: vh(10), alignItems:'center', justifyContent: 'center'}}>
+                                  <TouchableOpacity onPress={pickPDF} style={{backgroundColor:'#78ABC6', borderRadius:15, width: vw(25), height: vh(10), alignItems:'center', justifyContent: 'center'}}>
                                     <Text style={{fontWeight:600, fontSize:18, color:'white'}}>
                                       PDF
                                     </Text>
