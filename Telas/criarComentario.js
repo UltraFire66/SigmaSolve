@@ -83,7 +83,7 @@ export default function CriarComentario({navigation}){
 
       if (error) throw error;
 
-      const publicUrl = `${supabaseUrl}/storage/v1/object/public/imagens/${filePath}`;
+      const publicUrl = `https://uqwqhxadgzwrcarwuxmn.supabase.co/storage/v1/object/public/imagens/${filePath}`;
       setUploadedUrl(publicUrl);
 
       console.log('Upload concluído:', publicUrl);

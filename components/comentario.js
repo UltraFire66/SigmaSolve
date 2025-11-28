@@ -126,61 +126,58 @@ function Comentario(props){
 
     return(
         
-           <View style = {styles.fundo}>
-                <View style = {styles.usuario}>
+        <View style = {styles.fundo}>
+          <View style = {styles.usuario}>
 
-                  {medalhaBronze && (<Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />)}
-                  {medalhaPrata && (<Image source = {require("../assets/medalhas/medalhaPrata.png")} style={styles.medalha} />)}
-                  {medalhaOuro && (<Image source = {require("../assets/medalhas/medalhaOuro.png")} style={styles.medalha} />)}
-                  {medalhaMax && (<Image source = {require("../assets/medalhas/medalhaMaxima.png")} style={styles.medalha} />)}
-                    <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 13, display: 'flex',alignItems: 'center'}}>{props.comentario.usuario.nome}</Text>
-                
-                </View>
+            {medalhaBronze && (<Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />)}
+            {medalhaPrata && (<Image source = {require("../assets/medalhas/medalhaPrata.png")} style={styles.medalha} />)}
+            {medalhaOuro && (<Image source = {require("../assets/medalhas/medalhaOuro.png")} style={styles.medalha} />)}
+            {medalhaMax && (<Image source = {require("../assets/medalhas/medalhaMaxima.png")} style={styles.medalha} />)}
+              <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 13, display: 'flex',alignItems: 'center'}}>{props.comentario.usuario.nome}</Text>
+          
+          </View>
 
-                <Text style = {{fontSize: 14,fontWeight: 'bold',width: '95%',padding:'5%'}}
-              >{props.comentario.conteudotexto}</Text>
+          <Text style = {{fontSize: 14,fontWeight: 'bold',width: '95%',padding:'5%'}}>{props.comentario.conteudotexto}</Text>
+          
+          <View style = {{display:'flex',justifyContent:'center', alignItems: 'center'}}>
+              {props.comentario.conteudoimg && <Image source={{uri: props.comentario.conteudoimg}} resizeMode="stretch" style = {{width:vw(50),height: vh(20)}}/>}
+          </View>
+
+          <View style = {styles.opcoes}>
+              <TouchableOpacity style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
               
-              <view style = {{width:'100%',height:"100%",display:'flex',justifyContent:'center'}}>
+              <Image source = {require("../assets/icones/iconeComentarioPreto.png")} resizeMode="cover"
+              style = {{width:32,height: 32,marginTop: 3,marginLeft: '3%'}}/>
+              <Text style = {{color: 'black',fontSize: 13}}>{comentarios.length}</Text>
 
-                 {props.comentario.conteudoimg && <Image source={{uri: props.comentario.conteudoimg}} resizeMode="stretch" style = {{width:vw(50),height: vh(20)}}/>}
+            </TouchableOpacity>
 
-              </view>
+            {likeDado ? (
 
-                <View style = {styles.opcoes}>
-                    <TouchableOpacity style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
-                    
-                    <Image source = {require("../assets/icones/iconeComentarioPreto.png")} resizeMode="cover"
-                    style = {{width:32,height: 32,marginTop: 3,marginLeft: '3%'}}/>
-                    <Text style = {{color: 'black',fontSize: 13}}>{comentarios.length}</Text>
+            <TouchableOpacity onPress =  {()=> {tirarLike()}} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
+              
+              <Image source = {require("../assets/icones/iconeLikePreenchido.png")}
+              style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
+              <Text style = {{color: 'black',fontSize: 13}}>{props.comentario.likes + deuLike}</Text>
 
-                  </TouchableOpacity>
-
-                  {likeDado ? (
-
-                  <TouchableOpacity onPress =  {()=> {tirarLike()}} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
-                    
-                    <Image source = {require("../assets/icones/iconeLikePreenchido.png")}
-                    style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
-                    <Text style = {{color: 'black',fontSize: 13}}>{props.comentario.likes + deuLike}</Text>
-
-                  </TouchableOpacity>
+            </TouchableOpacity>
 
 
-                  ) :
-                  
-                  (
+            ) :
+            
+            (
 
-                  <TouchableOpacity onPress =  {()=> {darLike()}} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
-                    
-                    <Image source = {require("../assets/icones/iconeLike.png")}
-                    style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
-                    <Text style = {{color: 'black',fontSize: 13}}>{props.comentario.likes + deuLike}</Text>
+            <TouchableOpacity onPress =  {()=> {darLike()}} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
+              
+              <Image source = {require("../assets/icones/iconeLike.png")}
+              style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
+              <Text style = {{color: 'black',fontSize: 13}}>{props.comentario.likes + deuLike}</Text>
 
-                  </TouchableOpacity>
+            </TouchableOpacity>
 
-                  )}
-                </View>
-           </View>
+            )}
+          </View>
+        </View>
         
     )
 }

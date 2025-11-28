@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet,Button,Image, TextInput,TouchableOpacity, Touchable, Alert} from 'react-native';
+import { View, Text, ScrollView, StyleSheet,Button, Modal, Image, TextInput,TouchableOpacity, Touchable, Alert} from 'react-native';
 import * as FileSystem from 'expo-file-system/legacy';
 import { Buffer } from 'buffer';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -33,6 +33,7 @@ export default function CriarTopico({navigation}){
   const [medalhaPrata, setMedalhaPrata] = useState(false)
   const [medalhaOuro, setMedalhaOuro] = useState(false)
   const [medalhaMax, setMedalhaMax] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false)
 
   const [uploading, setUploading] = useState(false);
   const [imageUri, setImageUri] = useState(null);
@@ -55,6 +56,7 @@ export default function CriarTopico({navigation}){
       setImageUri(result.assets[0].uri);
       setAsset(result.assets[0]);
     }
+    setModalVisible(false)
   };
 
   
@@ -83,7 +85,7 @@ export default function CriarTopico({navigation}){
 
       if (error) throw error;
 
-      const publicUrl = `${supabaseUrl}/storage/v1/object/public/imagens/${filePath}`;
+      const publicUrl = `https://uqwqhxadgzwrcarwuxmn.supabase.co/storage/v1/object/public/imagens/${filePath}`;
       setUploadedUrl(publicUrl);
 
       console.log('Upload concluído:', publicUrl);
@@ -193,23 +195,45 @@ export default function CriarTopico({navigation}){
 
                     </View> 
 
-                      <View style={{width: vw(85), backgroundColor: '#336699', borderRadius: 27, paddingVertical: 30, alignItems: 'center', marginBottom:vh(5)}}>
-                          <View style={{width: '100%', backgroundColor: '#D9D9D9', gap: 10, alignItems: 'center'}}>
-                            <Text style = {styles.titulo}>Título do Tópico</Text>
-                            <TextInput style = {styles.inputTitulo} value={titulo} onChangeText={setTitulo}/>
-                            <Text style = {styles.titulo}>Conteúdo da postagem</Text>
-                            <TextInput  multiline={true} style = {styles.inputConteudo} value={conteudo} onChangeText={setConteudo}/>
-                            {imageUri && (<Image source={{uri: imageUri}} resizeMode='contain' style={{width:vw(50), height:vh(50)}}/>)}
-                            <TouchableOpacity style = {styles.anexarImagem} onPress={pickImage}>
-                              <Text  style = {{color: '#0066FF'}}>Anexar Imagens</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style = {styles.criarTopico} onPress={() => {handleInsert()}}>
-                              <LinearGradient style={[{height:"100%", width:'100%', alignItems: 'center', justifyContent:'space-around', flexDirection:'row', borderRadius:20}]} colors={['#0066FF','#00AACC']} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }}>
-                                <Text style={{color:'white'}}>Criar Tópico</Text>
-                              </LinearGradient>
-                            </TouchableOpacity>
-                          </View>
-                      </View>
+                    <View style={{width: vw(85), backgroundColor: '#336699', borderRadius: 27, paddingVertical: 30, alignItems: 'center', marginBottom:vh(5)}}>
+                        <View style={{width: '100%', backgroundColor: '#D9D9D9', gap: 10, alignItems: 'center'}}>
+                          <Text style = {styles.titulo}>Título do Tópico</Text>
+                          <TextInput style = {styles.inputTitulo} value={titulo} onChangeText={setTitulo}/>
+                          <Text style = {styles.titulo}>Conteúdo da postagem</Text>
+                          <TextInput  multiline={true} style = {styles.inputConteudo} value={conteudo} onChangeText={setConteudo}/>
+                          {imageUri && (<Image source={{uri: imageUri}} resizeMode='contain' style={{width:vw(50), height:vh(50)}}/>)}
+                          <TouchableOpacity style = {styles.anexarImagem} onPress={() => setModalVisible(true)}>
+                            <Text  style = {{color: '#0066FF'}}>Anexar Imagem ou Arquivo PDF</Text>
+                          </TouchableOpacity>
+                        
+                          <Modal animationType="none" transparent={true} visible={modalVisible} >
+                              <TouchableOpacity style={{backgroundColor: 'rgba(0, 0, 0, 0.5)', width:vw(100), height: vh(100)}} onPressOut={() => setModalVisible(false)}>                  
+                              </TouchableOpacity>
+                              <View style={{backgroundColor:'white', borderWidth:3, borderColor:'#D9D9D9', position: 'absolute', width: vw(90), height: vh(30), right: vw(5), top: vh(40), borderRadius:35, display: 'flex', alignItems:'center', justifyContent:'center' }}>
+                                <Text style={{fontWeight:600, fontSize:18, textAlign:'center', marginBottom: vh(6)}}>Você deseja anexar uma imagem ou um arquivo PDF?</Text>
+                                <View style={{display:'flex', flexDirection:'row', gap:vw(15), marginBottom: vh(3)}}>
+                                  <TouchableOpacity onPress={pickImage} style={{backgroundColor:'#78ABC6', borderRadius:15, width: vw(25), height: vh(10), alignItems:'center', justifyContent: 'center'}}>
+                                    <Text style={{fontWeight:600, fontSize:18, color:'white'}}>
+                                      Imagem
+                                    </Text>
+                                    <Feather name = 'image' size={50} color="white" />
+                                  </TouchableOpacity>
+                                  <TouchableOpacity style={{backgroundColor:'#78ABC6', borderRadius:15, width: vw(25), height: vh(10), alignItems:'center', justifyContent: 'center'}}>
+                                    <Text style={{fontWeight:600, fontSize:18, color:'white'}}>
+                                      PDF
+                                    </Text>
+                                    <Feather name = 'file-text' size={50} color="white" />
+                                  </TouchableOpacity>
+                                </View>
+                              </View>
+                          </Modal>
+                          <TouchableOpacity style = {styles.criarTopico} onPress={() => {handleInsert()}}>
+                            <LinearGradient style={[{height:"100%", width:'100%', alignItems: 'center', justifyContent:'space-around', flexDirection:'row', borderRadius:20}]} colors={['#0066FF','#00AACC']} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }}>
+                              <Text style={{color:'white'}}>Criar Tópico</Text>
+                            </LinearGradient>
+                          </TouchableOpacity>
+                        </View>
+                    </View>
                   </ScrollView>
                 </LinearGradient>
             </View>
