@@ -10,7 +10,8 @@ import { Feather } from '@expo/vector-icons';
 
 function Post(props){
 
-    const [modalVisible,setModalVisible] = useState(false);
+    const [modalDenunciaVisible,setmodalDenunciaVisible] = useState(false);
+    const [modalImagemVisible,setmodalImagemVisible] = useState(false);
     const [checaDenuncia,setChecaDenuncia] = useState();
     const [carregandoDenuncia,setCarregandoDenuncia] = useState(false);
     const [textoDenuncia,setTextoDenuncia] = useState();
@@ -22,7 +23,7 @@ function Post(props){
 
     async function buscaNumComentario(){
 
-      //setModalVisible(true);
+      //setmodalDenunciaVisible(true);
 
       const { data, error } = await supabase
               .from('comentario')
@@ -35,7 +36,7 @@ function Post(props){
 
     async function buscaComentario(){
 
-      //setModalVisible(true);
+      //setmodalDenunciaVisible(true);
 
       const { data, error } = await supabase
               .from('comentario')
@@ -131,7 +132,7 @@ function Post(props){
 
     function funcaodoSim(){
 
-       setModalVisible(false); 
+       setmodalDenunciaVisible(false); 
 
       if(checaDenuncia){
      
@@ -165,16 +166,16 @@ function Post(props){
 
                 <Text style = {{fontSize: 13,color: 'black', opacity: 0.5}}>Há duas horas</Text>
 
-                <TouchableOpacity onPressOut={() => { setCarregandoDenuncia(true),procuraDenuncia(), setModalVisible(true)}}>
+                <TouchableOpacity onPressOut={() => { setCarregandoDenuncia(true),procuraDenuncia(), setmodalDenunciaVisible(true)}}>
                   <Image source = {require("../assets/icones/iconeDenuncia.png")}
                   style = {{width:20,height: 20,marginRight: 3}} />
                 </TouchableOpacity>
                 <Modal
                 animationType="none"
                 transparent={true}
-                visible={modalVisible}
+                visible={modalDenunciaVisible}
                 >
-                  <TouchableOpacity style={{backgroundColor: 'rgba(0, 0, 0, 0.5)', width:vw(100), height: vh(100)}} onPressOut={() => setModalVisible(false)}>                  
+                  <TouchableOpacity style={{backgroundColor: 'rgba(0, 0, 0, 0.5)', width:vw(100), height: vh(100)}} onPressOut={() => setmodalDenunciaVisible(false)}>                  
                   </TouchableOpacity>
                  
 
@@ -190,7 +191,7 @@ function Post(props){
                             Sim
                           </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor:'#E04083', paddingVertical:vh(1.5), paddingHorizontal:vw(5), borderRadius:15}} onPressOut={()=>{setChecaDenuncia(),setModalVisible(false)}}>
+                        <TouchableOpacity style={{backgroundColor:'#E04083', paddingVertical:vh(1.5), paddingHorizontal:vw(5), borderRadius:15}} onPressOut={()=>{setChecaDenuncia(),setmodalDenunciaVisible(false)}}>
                           <Text style={{fontWeight:600, fontSize:18, color:'white'}}>
                             Não
                           </Text>
@@ -209,7 +210,31 @@ function Post(props){
               <Text style = {{fontSize: 14,fontWeight: 'bold',width: '95%',padding:'5%'}}
               >{props.post.conteudotexto}</Text>
               <View style = {{display:'flex',justifyContent:'center', alignItems: 'center'}}>
-                {props.post.conteudoimg && <Image source={{uri: props.post.conteudoimg}} resizeMode="stretch" style = {{width:vw(50),height: vh(20)}}/>}
+                {props.post.conteudoimg && <TouchableOpacity onPressOut={() => setmodalImagemVisible(true)}><Image source={{uri: props.post.conteudoimg}} resizeMode="stretch" style = {{width:vw(50),height: vh(20)}}/></TouchableOpacity>}
+                
+                <Modal
+                animationType="none"
+                transparent={true}
+                visible={modalImagemVisible}
+                >
+                  <TouchableOpacity style={{backgroundColor: 'rgba(0, 0, 0, 0.5)', width:vw(100), height: vh(100)}} onPressOut={() => setmodalImagemVisible(false)}>                  
+                  </TouchableOpacity>
+                 
+
+                    <View style={{backgroundColor:'white', borderWidth:3, borderColor:'#D9D9D9', position: 'absolute', width: vw(90), height: vh(50), right: vw(5), top: vh(25), borderRadius:35, display: 'flex', alignItems:'center', justifyContent:'center', gap:vh(5)}}>
+                       
+                   
+                      <>
+                        <Image source={{uri: props.post.conteudoimg}} resizeMode="stretch" style = {{width:vw(85),height: vh(44)}}/>
+                      </>
+                      
+                  
+                    </View>
+
+                  
+                </Modal>
+                
+                
                 {props.post.urlPDF && 
                   <TouchableOpacity onPress = {() => Linking.openURL(props.post.urlPDF)}>
                     <Feather name = 'file-text' size={100} color="black" />
@@ -240,7 +265,7 @@ function Post(props){
                         style = {{width:20,height: 20,marginRight: 3}} />
                       </TouchableOpacity>
                       
-                      <TouchableOpacity style = {styles.criarComentario} onPress={()=>props.navigation.navigate('CriarComentario', {props: props.post, disciplina: props.disciplina})}>
+                      <TouchableOpacity style = {styles.criarComentario} onPress={()=>props.navigation.navigate('CriarComentario', {props: props.post, pesquisaNavegacao: props.pesquisaNavegacao, disciplina: props.disciplina,fromScreen:'ForumDisciplina'})}>
                           <Text style ={{fontWeight: 'bold'}}>Comentar</Text>
                       </TouchableOpacity>
 

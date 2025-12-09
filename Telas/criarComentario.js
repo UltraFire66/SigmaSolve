@@ -22,6 +22,8 @@ export default function CriarComentario({navigation}){
   const route = useRoute();
   const {props} = route.params;
   const {disciplina} = route.params;
+  const {fromScreen} = route.params;
+  const {pesquisaNavegacao} = route.params;
   console.log(props)
   const[titulo,setTitulo] = useState('');
   const [modalVisible, setModalVisible] = useState(false)
@@ -251,7 +253,7 @@ export default function CriarComentario({navigation}){
         else{
         Alert.alert('Comentario Criado com sucesso!');
         console.log('Comentario Criado com sucesso!');
-        navigation.goBack();
+        navigation.navigate(fromScreen,{item:pesquisaNavegacao});
       }
     }      
    }

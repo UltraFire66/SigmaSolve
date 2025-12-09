@@ -153,7 +153,7 @@ function Comentario(props){
           </View>
 
           <View style = {styles.opcoes}>
-              <TouchableOpacity style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
+              <TouchableOpacity style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}} onPress={()=>props.navigation.navigate('Topico', {idComentario: props.comentario.idcomentario})}>
               
               <Image source = {require("../assets/icones/iconeComentarioPreto.png")} resizeMode="cover"
               style = {{width:32,height: 32,marginTop: 3,marginLeft: '3%'}}/>

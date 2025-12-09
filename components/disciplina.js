@@ -1,4 +1,5 @@
 import {Text,View, StyleSheet, Image, Touchable, TouchableOpacity} from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
 
 
@@ -6,13 +7,36 @@ function Disciplina(props){
 
     return(
         <>
-            <View style={{}}>
-                <TouchableOpacity style={{marginTop:'0%', marginBottom:"5%"}} onPress = {props.onPress}>
-                    <View style={{backgroundColor:'#336699', borderRadius:15, width:"100%", alignItems:'center', justifyContent:'center'}}>
-                            <Text style={{color:'white', fontSize:16, fontWeight: 'bold', marginTop:"10%", marginBottom:"10%", textAlign: 'center'}}>{props.disciplina}</Text>
-                    </View>
-                </TouchableOpacity>
-            </View>  
+          <View style={{}}>
+          <TouchableOpacity
+            style={{ marginTop: '0%', marginBottom: '5%' }}
+            onPress={props.onPress}
+          >
+
+            <View style={{backgroundColor: '#336699',borderRadius: 15,width: '100%',padding: 10,paddingBottom: 20}}>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <Feather name="trash-2" size={22} color="white" />
+              </View>
+
+           
+              <View
+                style={{justifyContent: 'center',alignItems: 'center',marginTop: 5,marginBottom: 10}}>
+
+                <Text style={{color: 'white',fontSize: 16,fontWeight: 'bold',textAlign: 'center'}}>
+                  {props.disciplina}
+                </Text>
+              </View>
+
+            </View>
+            
+          </TouchableOpacity>
+        </View>  
         </>
     )
 }

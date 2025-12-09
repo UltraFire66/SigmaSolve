@@ -17,6 +17,7 @@ export default function ForumDisciplina({navigation}){
   const [nome, setNome] = useState('')
   const route = useRoute();
   const {item} = route.params;
+  const pesquisaNavegacao = item; 
   const [posts,setPosts] = useState([]);
   const [temPost,setTemPost] =  useState(true);
   const [carregando,setCarregando] = useState(true);
@@ -146,7 +147,7 @@ export default function ForumDisciplina({navigation}){
                           scrollEnabled={false}
                           renderItem={({ item }) => (
                           
-                            <Post disciplina = {nomeDis} post={item} navigation = {navigation}></Post>
+                            <Post disciplina = {nomeDis} post={item} pesquisaNavegacao =  {pesquisaNavegacao} navigation = {navigation}></Post>
 
                         )}
                         />

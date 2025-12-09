@@ -108,7 +108,7 @@ export default function Home({navigation}){
                         keyExtractor={(item) => item.idDisciplina.toString()}
                         scrollEnabled={false}
                         renderItem={({ item }) => (
-                          <Disciplina disciplina={item.nomedisciplina} onPress={()=>navigation.navigate('ForumDisciplina', {item: item})}></Disciplina>
+                          <Disciplina disciplina={item.nomedisciplina} excluivel={ehAdmin} onPress={()=>navigation.navigate('ForumDisciplina', {item: item})}></Disciplina>
                         )}
                       />
                     </ScrollView> 
