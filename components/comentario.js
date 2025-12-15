@@ -22,7 +22,7 @@ function Comentario(props){
       const { data, error } = await supabase
               .from('comentario')
               .select('*',{count: 'exact'})
-              .eq('fk_topico_idtopico', props.comentario.idcomentario)
+              .eq('fk_comentario_idcomentario', props.comentario.idcomentario)
       
       console.log(data);
       setComentarios(data);
@@ -109,9 +109,11 @@ function Comentario(props){
 
   useEffect(() =>{
 
+   
+
     buscaComentarios();
     buscaLike()
-    console.log(props.comentario)
+    //console.log(props.comentario)
 
     if(props.comentario.usuario.likes > 15){
       setMedalhaMax(true)
@@ -153,11 +155,11 @@ function Comentario(props){
           </View>
 
           <View style = {styles.opcoes}>
-              <TouchableOpacity style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}} onPress={()=>props.navigation.navigate('Topico', {idComentario: props.comentario.idcomentario})}>
+              <TouchableOpacity style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}} onPress={()=>props.navigation.navigate('VerComentario', {comentario: props.comentario,disciplina: props.disciplina,numComentarios: props.numComentarios})}>
               
               <Image source = {require("../assets/icones/iconeComentarioPreto.png")} resizeMode="cover"
               style = {{width:32,height: 32,marginTop: 3,marginLeft: '3%'}}/>
-              <Text style = {{color: 'black',fontSize: 13}}>{comentarios.length}</Text>
+              <Text style = {{color: 'black',fontSize: 13}}>{props.numComentarios}</Text>
 
             </TouchableOpacity>
 

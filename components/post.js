@@ -20,6 +20,35 @@ function Post(props){
     const [carregandoComentarios,setCarregandoComentarios] = useState(false);
     const [idUsuario,setIdUsuario] = useContext(userID);
     const [abrirComentario,setAbrirComentario] = useState(false);
+    const [numComentariosComentarios,setNumComentariosComentarios] = useState([]);
+
+
+    async function buscaNumComentarioComentario(idComentario){
+
+      //setmodalDenunciaVisible(true);
+
+      const { data, error } = await supabase
+              .from('comentario')
+              .select('*',{count: 'exact'})
+              .eq('fk_comentario_idcomentario', idComentario)
+        
+      setNumComentariosComentarios(prev=>{
+
+          const novoArray = prev;
+
+          if(!data)
+            novoArray[idComentario] = 0;
+          else
+            novoArray[idComentario] = data.length;
+
+          return novoArray;
+
+      })
+    
+
+
+    }
+
 
     async function buscaNumComentario(){
 
@@ -32,6 +61,8 @@ function Post(props){
         
       setNumComentarios(data.length);
       
+
+
     }
 
     async function buscaComentario(){
@@ -56,7 +87,11 @@ function Post(props){
               .eq('fk_topico_idtopico', props.post.idtopico)
         
       setComentarios(data);
-      console.log(data);
+      //console.log(data);
+      for(let i = 0;  i < data.length; i++){
+        await buscaNumComentarioComentario(data[i].idcomentario);
+      }
+
       setCarregandoComentarios(false);
     }
 
@@ -273,11 +308,20 @@ function Post(props){
                           data={comentarios}
                           keyExtractor={(item) => item.idcomentario.toString()}
                           scrollEnabled={false}
-                          renderItem={({ item }) => (
-                          
-                            <Comentario comentario = {item} navigation = {props.navigation}></Comentario>
+                          renderItem={({ item }) => {
 
-                        )}
+                            const numeroDeComentarios = numComentariosComentarios[item.idcomentario.toString()];
+                            
+
+                            return (
+                              <Comentario disciplina = {props.disciplina} comentario = {item} numComentarios = {numeroDeComentarios} navigation = {props.navigation}></Comentario>
+                            )
+                            
+                          }
+                          
+                            
+
+                        }
                         />
 
                       
