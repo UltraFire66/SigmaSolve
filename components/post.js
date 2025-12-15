@@ -21,8 +21,13 @@ function Post(props){
     const [idUsuario,setIdUsuario] = useContext(userID);
     const [abrirComentario,setAbrirComentario] = useState(false);
     const [numComentariosComentarios,setNumComentariosComentarios] = useState([]);
+    const [medalhaBronze, setMedalhaBronze] = useState(false)
+    const [medalhaPrata, setMedalhaPrata] = useState(false)
+    const [medalhaOuro, setMedalhaOuro] = useState(false)
+    const [medalhaMax, setMedalhaMax] = useState(false)
+    const [likes, setLikes] = useState(null)
 
-
+    console.log(props)
     async function buscaNumComentarioComentario(idComentario){
 
       //setmodalDenunciaVisible(true);
@@ -85,7 +90,7 @@ function Post(props){
 
               `,{count: 'exact'})
               .eq('fk_topico_idtopico', props.post.idtopico)
-        
+      //likes = data[0].usuario.likes
       setComentarios(data);
       //console.log(data);
       for(let i = 0;  i < data.length; i++){
@@ -186,6 +191,17 @@ function Post(props){
     useEffect(()=>{
 
       buscaNumComentario();
+      console.log("pirola")
+      console.log(props.post.usuario.likes)
+      if(props.post.usuario.likes > 15){
+        setMedalhaMax(true)
+      }else if(props.post.usuario.likes > 10){
+        setMedalhaOuro(true)
+      }else if(props.post.usuario.likes > 5){
+        setMedalhaPrata(true)
+      }else{
+        setMedalhaBronze(true)
+      }
 
     },[])
     
@@ -195,7 +211,10 @@ function Post(props){
               <View style = {styles.topo}>
                 
                 <View style = {styles.usuario}>
-                  <Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />
+                  {medalhaBronze && (<Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />)}
+                  {medalhaPrata && (<Image source = {require("../assets/medalhas/medalhaPrata.png")} style={styles.medalha} />)}
+                  {medalhaOuro && (<Image source = {require("../assets/medalhas/medalhaOuro.png")} style={styles.medalha} />)}
+                  {medalhaMax && (<Image source = {require("../assets/medalhas/medalhaMaxima.png")} style={styles.medalha} />)}
                   <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 10, display: 'flex',alignItems: 'center', marginBottom: 5}}>{props.post.usuario.nome}</Text>
                 </View>
 
@@ -241,8 +260,9 @@ function Post(props){
                 </Modal>
 
               </View>
-
-              <Text style = {{fontSize: 14,fontWeight: 'bold',width: '95%',padding:'5%'}}
+              <Text style = {{fontSize: 16,fontWeight: 'bold',width: '95%',padding:'5%'}}
+              >{props.post.titulotopico}</Text>
+              <Text style = {{fontSize: 14, width: '95%', marginLeft: vw(15), marginBottom: vh(3)}}
               >{props.post.conteudotexto}</Text>
               <View style = {{display:'flex',justifyContent:'center', alignItems: 'center'}}>
                 {props.post.conteudoimg && <TouchableOpacity onPressOut={() => setmodalImagemVisible(true)}><Image source={{uri: props.post.conteudoimg}} resizeMode="stretch" style = {{width:vw(50),height: vh(20)}}/></TouchableOpacity>}
@@ -300,7 +320,7 @@ function Post(props){
                         style = {{width:20,height: 20,marginRight: 3}} />
                       </TouchableOpacity>
                       
-                      <TouchableOpacity style = {styles.criarComentario} onPress={()=>props.navigation.navigate('CriarComentario', {props: props.post, pesquisaNavegacao: props.pesquisaNavegacao, disciplina: props.disciplina,fromScreen:'ForumDisciplina'})}>
+                      <TouchableOpacity style = {styles.criarComentario} onPress={()=>props.navigation.navigate('CriarComentario', {props: props.post, pesquisaNavegacao: props.pesquisaNavegacao, disciplina: props.disciplina,fromScreen: props.fromScreen})}>
                           <Text style ={{fontWeight: 'bold'}}>Comentar</Text>
                       </TouchableOpacity>
 

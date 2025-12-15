@@ -24,6 +24,8 @@ export default function CriarComentario({navigation}){
   const {disciplina} = route.params;
   const {fromScreen} = route.params;
   const {pesquisaNavegacao} = route.params;
+  console.log('pesquisaNavegacao')
+  console.log(pesquisaNavegacao)
   console.log(props)
   const[titulo,setTitulo] = useState('');
   const [modalVisible, setModalVisible] = useState(false)

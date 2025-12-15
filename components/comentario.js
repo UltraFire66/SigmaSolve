@@ -1,4 +1,4 @@
-import {Text,Modal,View, StyleSheet, Image, Touchable, TouchableOpacity, Linking} from 'react-native';
+import {Text,Modal,View, StyleSheet, Image, Touchable, ActivityIndicator, Alert, TouchableOpacity, Linking} from 'react-native';
 import { useState,useEffect,useContext} from 'react';
 import { vh, vw } from 'react-native-css-vh-vw';
 import { supabase } from '../context/supabase';
@@ -15,6 +15,10 @@ function Comentario(props){
   const [likeDado,setLikeDado] = useState(false);
   const [deuLike,setDeuLike] = useState(0);
   const [comentarios,setComentarios] = useState([]);
+  const [modalDenunciaVisible,setmodalDenunciaVisible] = useState(false);
+  const [checaDenuncia,setChecaDenuncia] = useState();
+  const [carregandoDenuncia,setCarregandoDenuncia] = useState(false);
+  const [textoDenuncia,setTextoDenuncia] = useState();
 
   async function buscaComentarios(){
 
@@ -106,6 +110,93 @@ function Comentario(props){
       
   }
 
+  async function procuraDenuncia(){
+      const { data, error} = await supabase
+      .from('denunciacomentario')
+      .select('*')
+      .eq('fk_usuario_idusuario', idUsuario)
+      .eq('fk_topico_idcomentario', props.comentario.idcomentario)
+      .maybeSingle()
+
+      //console.log(data);
+
+      if(data)
+        setTextoDenuncia('Deseja retirar a denúncia?');        
+      else
+        setTextoDenuncia('Deseja fazer a denúncia?');
+
+      setChecaDenuncia(data);
+      setCarregandoDenuncia(false);
+  }
+
+  async function realizarDenuncia(){
+    const { data: insereDenuncia, error: erroDenuncia} = await supabase
+      .from('denunciacomentario')
+      .insert([{ flagdenuncia: true, fk_usuario_idusuario: idUsuario, fk_topico_idcomentario: props.comentario.idcomentario}])
+    
+    if (erroDenuncia) console.error(erroDenuncia)
+      else{
+        Alert.alert('Denúncia cadastrada com sucesso!')
+        //setar modal falso fechar
+      }
+    const { data: countDenuncia, error: errorCount } = await supabase
+      .from('denunciacomentario')
+      .select('*',{count: 'exact'})
+      .eq('fk_topico_idcomentario', props.comentario.idcomentario)
+      
+    if (errorCount) console.error(errorCount)
+      else{
+        console.log(countDenuncia.length)
+      }
+        
+    if(countDenuncia.length>14){
+      const { data: updateFlag, error: errorFlag } = await supabase
+        .from('comentario')
+        .update({flagdenunciado: true})
+        .eq('idcomentario', props.comentario.idcomentario)
+      
+      if (errorFlag) console.error(errorFlag)
+      else{
+        console.log('Tópico enviado para análise.')
+      }
+    }
+  }
+
+  async function retirarDenuncia(){
+
+    const { data, error } = await supabase
+      .from('denunciacomentario')
+        .delete()
+        .eq('iddenuncia', checaDenuncia.iddenuncia)
+        if (error) console.error(error)
+        else{
+          Alert.alert('Denúncia retirada com sucesso!')
+          //setar modal falso fechar
+        }
+        
+        
+
+      
+
+  }
+
+  function funcaodoSim(){
+
+      setmodalDenunciaVisible(false); 
+
+    if(checaDenuncia){
+    
+      retirarDenuncia();
+
+    }
+    else{
+    
+      realizarDenuncia();
+
+    }
+
+  }
+
 
   useEffect(() =>{
 
@@ -117,9 +208,9 @@ function Comentario(props){
 
     if(props.comentario.usuario.likes > 15){
       setMedalhaMax(true)
-    }else if(props.comentario.usuario.likes.likes > 10){
+    }else if(props.comentario.usuario.likes > 10){
       setMedalhaOuro(true)
-    }else if(props.comentario.usuario.likes.likes > 5){
+    }else if(props.comentario.usuario.likes > 5){
       setMedalhaPrata(true)
     }else{
       setMedalhaBronze(true)
@@ -136,8 +227,45 @@ function Comentario(props){
             {medalhaPrata && (<Image source = {require("../assets/medalhas/medalhaPrata.png")} style={styles.medalha} />)}
             {medalhaOuro && (<Image source = {require("../assets/medalhas/medalhaOuro.png")} style={styles.medalha} />)}
             {medalhaMax && (<Image source = {require("../assets/medalhas/medalhaMaxima.png")} style={styles.medalha} />)}
-              <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 13, display: 'flex',alignItems: 'center'}}>{props.comentario.usuario.nome}</Text>
-          
+            <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 13, display: 'flex',alignItems: 'center'}}>{props.comentario.usuario.nome}</Text>
+            
+            <TouchableOpacity onPressOut={() => { setCarregandoDenuncia(true),procuraDenuncia(), setmodalDenunciaVisible(true)}}>
+              <Image source = {require("../assets/icones/iconeDenuncia.png")}
+              style = {{width:20,height: 20,marginRight: 3, marginLeft: vw(25 )}} />
+            </TouchableOpacity>
+            <Modal
+            animationType="none"
+            transparent={true}
+            visible={modalDenunciaVisible}
+            >
+              <TouchableOpacity style={{backgroundColor: 'rgba(0, 0, 0, 0.5)', width:vw(100), height: vh(100)}} onPressOut={() => setmodalDenunciaVisible(false)}>                  
+              </TouchableOpacity>
+
+              <View style={{backgroundColor:'white', borderWidth:3, borderColor:'#D9D9D9', position: 'absolute', width: vw(90), height: vh(20), right: vw(5), top: vh(40), borderRadius:35, display: 'flex', alignItems:'center', justifyContent:'center', gap:vh(5)}}>
+                  {carregandoDenuncia ? (<ActivityIndicator size = 'large' color="#000000"/>) :
+                ( 
+                  <>
+                    <Text style={{fontWeight:600, fontSize:18, textAlign:'center'}}>{textoDenuncia}</Text>
+                    <View style={{display:'flex', flexDirection:'row', gap:vw(15)}}>
+                      
+                      <TouchableOpacity style={{backgroundColor:'#78ABC6', paddingVertical:vh(1.5), paddingHorizontal:vw(5), borderRadius:15}} onPressOut={()=>{funcaodoSim()}}>
+                        <Text style={{fontWeight:600, fontSize:18, color:'white'}}>
+                          Sim
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={{backgroundColor:'#E04083', paddingVertical:vh(1.5), paddingHorizontal:vw(5), borderRadius:15}} onPressOut={()=>{setChecaDenuncia(),setmodalDenunciaVisible(false)}}>
+                        <Text style={{fontWeight:600, fontSize:18, color:'white'}}>
+                          Não
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    </>
+                    )
+                }
+              </View>
+            </Modal>
+
+
           </View>
 
           <Text style = {{fontSize: 14,fontWeight: 'bold',width: '95%',padding:'5%'}}>{props.comentario.conteudotexto}</Text>

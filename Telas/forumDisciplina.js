@@ -57,7 +57,7 @@ export default function ForumDisciplina({navigation}){
               datacriacao,
               urlPDF,
               nomePdf,
-              usuario (nome)
+              usuario (nome, likes)
               `, { count: 'exact'})
             .eq('flagdenunciado', false)
             .eq('fk_disciplina_coddisciplina', item.coddisciplina);
@@ -147,7 +147,7 @@ export default function ForumDisciplina({navigation}){
                           scrollEnabled={false}
                           renderItem={({ item }) => (
                           
-                            <Post disciplina = {nomeDis} post={item} pesquisaNavegacao =  {pesquisaNavegacao} navigation = {navigation}></Post>
+                            <Post fromScreen = "ForumDisciplina" disciplina = {nomeDis} post={item} pesquisaNavegacao =  {pesquisaNavegacao} navigation = {navigation}></Post>
 
                         )}
                         />
