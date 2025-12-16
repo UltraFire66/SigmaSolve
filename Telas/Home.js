@@ -11,7 +11,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function Home({navigation}){
   const [idUsuario,setIdUsuario] = useContext(userID)
   const [nome, setNome] = useState('')
+  const [filtro,setFiltro] =  useState('')
   const [disciplinas, setDisciplinas] = useState([])
+  const [disciplinasFiltradas,setDisciplinasFiltradas] = useState([]);
   const [medalhaBronze, setMedalhaBronze] = useState(false)
   const [medalhaPrata, setMedalhaPrata] = useState(false)
   const [medalhaOuro, setMedalhaOuro] = useState(false)
@@ -50,7 +52,31 @@ export default function Home({navigation}){
             .from('disciplina')
             .select('*')
     setDisciplinas(data)
+    setDisciplinasFiltradas(data)
     console.log(disciplinas)
+  }
+
+  function fazerPesquisa(){
+
+
+    if(filtro.trim() === ''){
+      setDisciplinasFiltradas(disciplinas);
+    }
+    
+  
+      const textoFormatado = filtro.toLowerCase();
+      
+
+      const filtrado = disciplinas.filter(item => {
+
+        return item.nomedisciplina.toString().toLowerCase().includes(textoFormatado)
+
+      })
+
+      setDisciplinasFiltradas(filtrado);
+
+    
+
   }
 
   useEffect(() => {
@@ -58,6 +84,11 @@ export default function Home({navigation}){
     buscaDisciplinas()
   }, [])
   
+
+  
+  useEffect(() => {
+  fazerPesquisa()
+}, [filtro])
 
     return(
         <SafeAreaView style = {styles.safeContainer}>
@@ -75,10 +106,14 @@ export default function Home({navigation}){
                     </TouchableOpacity>
                   </View>
 
-                  <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "60%", borderRadius: 10, backgroundColor: 'white', marginLeft: '5%', marginRight:'5%'}}>
-                    <TextInput style = {{width: '80%'}} />
-                    <Image source = {require("../assets/icones/iconeLupa.png")}
-                    style = {{width: 20, height: 20}}/>
+                  <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "45%", borderRadius: 10, backgroundColor: 'white', marginLeft: '5%', marginRight:'5%'}}>
+                    <TextInput style = {{width: '80%',height:'50%',marginLeft: '5%'}} value={filtro} onChangeText={setFiltro}/>
+
+                    <TouchableOpacity onPress={()=>{fazerPesquisa()}}>
+
+                      <Image source = {require("../assets/icones/iconeLupa.png")} style = {{width: 20, height: 20}}/>
+
+                      </TouchableOpacity>
                   </View>
 
                   <Menu navigation={navigation}></Menu>
@@ -104,7 +139,7 @@ export default function Home({navigation}){
                   <View style={{width:"90%", height:"80%", alignItems:'center', justifyContent:'center'}}>
                     <ScrollView style={[{width:"100%", height:"100%"}, ehAdmin ? {marginBottom: vh(10)} : '']}>
                       <FlatList
-                        data={disciplinas}
+                        data={disciplinasFiltradas}
                         keyExtractor={(item) => item.idDisciplina.toString()}
                         scrollEnabled={false}
                         renderItem={({ item }) => (

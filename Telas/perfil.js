@@ -122,9 +122,7 @@ export default function Perfil({navigation}){
                         <TouchableOpacity onPress={() => setDuvida(true)}>  
                           <Text style = {{fontSize: 20,fontWeight: 'bold',textDecorationLine: 'underline', color: 'white' }}>Tópicos</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => setDuvida(false)}>
-                          <Text style = {{fontSize: 20,fontWeight: 'bold', color: 'white'}}>Comentários</Text>
-                        </TouchableOpacity>
+                        
                       </View>
                       ) : 
                       (
@@ -132,9 +130,7 @@ export default function Perfil({navigation}){
                           <TouchableOpacity onPress={() => setDuvida(true)}>  
                             <Text style = {{fontSize: 20,fontWeight: 'bold', color: 'white'}}>Tópicos</Text>
                           </TouchableOpacity>
-                          <TouchableOpacity onPress={() => setDuvida(false)}>
-                            <Text style = {{fontSize: 20,fontWeight: 'bold', color: 'white', textDecorationLine: 'underline'}}>Comentários</Text>
-                          </TouchableOpacity>
+                          
                       </View>)
                       }
                       

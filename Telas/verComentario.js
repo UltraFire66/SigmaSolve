@@ -140,7 +140,7 @@ export default function verComentario({navigation}){
 
     return(
         <SafeAreaView style = {styles.safeContainer}>
-            <View style = {styles.container}>
+            <View style = {[styles.container,{alignItems:'space-between',width: '100%'}]}>
                 <View style = {styles.barraTopo}>
                   <View style = {styles.usuario}>
                     {medalhaBronze && (<Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />)}
@@ -149,16 +149,12 @@ export default function verComentario({navigation}){
                     {medalhaMax && (<Image source = {require("../assets/medalhas/medalhaMaxima.png")} style={styles.medalha} />)}
                     <TouchableOpacity onPress={()=>navigation.navigate('Perfil')}>
                       <Text style = {{minWidth: vw(20), fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 15, display: 'flex',alignItems: 'center'}}>
-                                {nome.length > 10 ? nome.substring(0, 10) + '...' : nome}
+                                {nome.length > 20 ? nome.substring(0, 20) + '...' : nome}
                       </Text>
                     </TouchableOpacity>
                   </View>
 
-                  <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "60%", borderRadius: 10, backgroundColor: 'white', marginLeft: '5%', marginRight:'5%'}}>
-                    <TextInput style = {{width: '80%'}} />
-                    <Image source = {require("../assets/icones/iconeLupa.png")}
-                    style = {{width: 20, height: 20}}/>
-                  </View>
+                 
 
                   <Menu navigation={navigation}></Menu>
                 </View>
@@ -239,16 +235,19 @@ const styles = StyleSheet.create({
     display: 'flex',
     width: '100%',
     height: '100%',
-    alignItems: 'center',
+    alignItems: 'center'
+    
   },
 
   barraTopo: {
     backgroundColor: '#D9D9D9',
-    width: '100%',
+    width: '90%',
     height: '10%',
     display:'flex',
+    marginLeft:'5%',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between'
   },
   tela: {
     width: '100%',

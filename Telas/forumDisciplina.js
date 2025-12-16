@@ -15,10 +15,12 @@ import { Feather } from '@expo/vector-icons';
 export default function ForumDisciplina({navigation}){
   const [idUsuario,setIdUsuario] = useContext(userID)
   const [nome, setNome] = useState('')
+  const [filtro,setFiltro] =  useState('')
   const route = useRoute();
   const {item} = route.params;
   const pesquisaNavegacao = item; 
   const [posts,setPosts] = useState([]);
+  const [postsFiltrados,setPostsFiltrados]=useState([]);
   const [temPost,setTemPost] =  useState(true);
   const [carregando,setCarregando] = useState(true);
   const nomeDis = item.nomedisciplina
@@ -65,6 +67,7 @@ export default function ForumDisciplina({navigation}){
     console.log(data.length)
     if(data.length != 0){
       setPosts(data);
+      setPostsFiltrados(data);
       console.log(data);
       setCarregando(false);
     }
@@ -73,6 +76,29 @@ export default function ForumDisciplina({navigation}){
       setCarregando(false);
     }
     
+  }
+
+  function fazerPesquisa(){
+
+
+    if(filtro.trim() === ''){
+      setPostsFiltrados(posts);
+    }
+    
+  
+      const textoFormatado = filtro.toLowerCase();
+      
+
+      const filtrado = posts.filter(item => {
+
+        return item.titulotopico.toString().toLowerCase().includes(textoFormatado)
+
+      })
+
+      setPostsFiltrados(filtrado);
+
+    
+
   }
 
   useEffect(() => {
@@ -86,6 +112,10 @@ export default function ForumDisciplina({navigation}){
       navigation.setParams({ atualizar: undefined });
     }
   }, [route.params?.atualizar]);
+
+  useEffect(() => {
+    fazerPesquisa()
+  }, [filtro])
 
     return(
         <SafeAreaView style = {styles.safeContainer}>
@@ -104,10 +134,14 @@ export default function ForumDisciplina({navigation}){
                     </TouchableOpacity>
                   </View>
 
-                  <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "60%", borderRadius: 10, backgroundColor: 'white', marginLeft: '5%', marginRight:'5%'}}>
-                    <TextInput style = {{width: '80%'}} />
-                    <Image source = {require("../assets/icones/iconeLupa.png")}
-                    style = {{width: 20, height: 20}}/>
+                  <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "45%", borderRadius: 10, backgroundColor: 'white', marginLeft: '5%', marginRight:'5%'}}>
+                    <TextInput style = {{width: '80%',height:'50%',marginLeft: '5%'}} value={filtro} onChangeText={setFiltro}/>
+
+                    <TouchableOpacity onPress={()=>{fazerPesquisa()}}>
+
+                      <Image source = {require("../assets/icones/iconeLupa.png")} style = {{width: 20, height: 20}}/>
+
+                      </TouchableOpacity>
                   </View>
 
                   <Menu navigation={navigation}></Menu>
@@ -143,7 +177,7 @@ export default function ForumDisciplina({navigation}){
                   (<ScrollView contentContainerStyle={{flexGrow: 1, alignItems: 'center', paddingBottom: 100, minHeight:vh(100)}} showsVerticalScrollIndicator={false}>
                       <View style={{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
                         <FlatList
-                          data={posts}
+                          data={postsFiltrados}
                           keyExtractor={(item) => item.idtopico.toString()}
                           scrollEnabled={false}
                           renderItem={({ item }) => (
