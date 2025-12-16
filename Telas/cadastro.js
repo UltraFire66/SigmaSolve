@@ -2,7 +2,7 @@ import { View, Text, ScrollView, StyleSheet,Button,Image, TextInput,TouchableOpa
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react'
 import { Feather } from '@expo/vector-icons';
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '../context/supabase';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Cadastro({navigation}){
@@ -13,12 +13,7 @@ export default function Cadastro({navigation}){
     const [senha1, setSenha1] = useState('');
     const [ocultarSenha, setOcultarSenha] = useState(true);
     const [ocultarSenha1, setOcultarSenha1] = useState(true);
-    const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
-    const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
-    const supabase = createClient(supabaseUrl, supabaseKey)
-    
-    
-
+        
     async function handleInsert(){
       if (email.endsWith('@cefetmg.br') || email.endsWith('@aluno.cefetmg.br')){
         const { data, error} = await supabase

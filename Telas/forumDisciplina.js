@@ -2,23 +2,22 @@ import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, Tex
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
 import { useContext, useState, useEffect, useCallback } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '../context/supabase';
 import { useRoute } from '@react-navigation/native';
 import { userID } from '../context/idUsuario';
 import Menu from '../components/menu';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { vh, vw } from 'react-native-css-vh-vw';
 import { useFocusEffect } from '@react-navigation/native';
+import { Feather } from '@expo/vector-icons';
 
 
-export default function Home({navigation}){
+export default function ForumDisciplina({navigation}){
   const [idUsuario,setIdUsuario] = useContext(userID)
   const [nome, setNome] = useState('')
-  const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
-  const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
-  const supabase = createClient(supabaseUrl, supabaseKey)
   const route = useRoute();
   const {item} = route.params;
+  const pesquisaNavegacao = item; 
   const [posts,setPosts] = useState([]);
   const [temPost,setTemPost] =  useState(true);
   const [carregando,setCarregando] = useState(true);
@@ -34,6 +33,7 @@ export default function Home({navigation}){
             .select('*')
             .eq('idusuario', idUsuario)
     setNome(data[0].nome)
+    
     if(data[0].likes > 15){
       setMedalhaMax(true)
     }else if(data[0].likes > 10){
@@ -55,8 +55,11 @@ export default function Home({navigation}){
               conteudoimg,
               titulotopico,
               datacriacao,
-              usuario (nome)
+              urlPDF,
+              nomePdf,
+              usuario (nome, likes)
               `, { count: 'exact'})
+              .order('datacriacao',{ascending:false})
             .eq('flagdenunciado', false)
             .eq('fk_disciplina_coddisciplina', item.coddisciplina);
     console.log(data.length)
@@ -145,7 +148,7 @@ export default function Home({navigation}){
                           scrollEnabled={false}
                           renderItem={({ item }) => (
                           
-                            <Post disciplina = {nomeDis} post={item} navigation = {navigation}></Post>
+                            <Post fromScreen = "ForumDisciplina" disciplina = {nomeDis} post={item} pesquisaNavegacao =  {pesquisaNavegacao} navigation = {navigation}></Post>
 
                         )}
                         />
