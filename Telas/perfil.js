@@ -1,62 +1,25 @@
-import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, FlatList, Image, TextInput} from 'react-native';
+import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
 import { useContext, useState, useEffect } from 'react'
-import { supabase } from '../context/supabase';
+import { createClient } from '@supabase/supabase-js'
 import { userID } from '../context/idUsuario';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { vh, vw } from 'react-native-css-vh-vw';
-import { useRoute } from '@react-navigation/native';
 
 
 export default function Perfil({navigation}){
     const [idUsuario,setIdUsuario] = useContext(userID)
     const [nome, setNome] = useState('')
+    const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
+    const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
+    const supabase = createClient(supabaseUrl, supabaseKey)
     const [medalhaBronze, setMedalhaBronze] = useState(false)
     const [medalhaPrata, setMedalhaPrata] = useState(false)
     const [medalhaOuro, setMedalhaOuro] = useState(false)
     const [medalhaMax, setMedalhaMax] = useState(false)
     const [likes, setLikes] = useState(0)
     const [falta, setFalta] = useState(0)
-    const [posts, setPosts] = useState([])
-    const [carregando, setCarregando] = useState(true)
-    const [temPost,setTemPost] =  useState(true);
-    const [nomeDis,setNomeDis] =  useState('');
-    const [pesquisaNavegacao,setPesquisaNavegacao] =  useState('');
-    const [duvida,setDuvida] =  useState(true);
-
-    
-    async function buscaPosts(){
-      const { data, error } = await supabase
-              .from('topico')
-              .select(`idtopico,
-                conteudotexto,
-                conteudoimg,
-                titulotopico,
-                datacriacao,
-                urlPDF,
-                nomePdf,
-                usuario (nome, likes),
-                fk_disciplina_coddisciplina,
-                disciplina (nomedisciplina, coddisciplina, idDisciplina, visivel)
-                `, { count: 'exact'})
-              .eq('flagdenunciado', false)  
-              .eq('fk_usuario_idusuario', idUsuario);
-      console.log(data.length)
-      console.log(data[0])
-      setPesquisaNavegacao(data.disciplina)
-      setNomeDis(data[0].disciplina.nomedisciplina)
-      if(data.length != 0){
-        setPosts(data);
-        console.log(data);
-        setCarregando(false);
-      }
-      else{
-        setTemPost(false);
-        setCarregando(false);
-      }
-      
-    }
 
     async function buscaNome(){
       const { data, error } = await supabase
@@ -82,7 +45,6 @@ export default function Perfil({navigation}){
 
     useEffect(() => {
       buscaNome()
-      buscaPosts()
     }, [])
 
     return(
@@ -116,48 +78,11 @@ export default function Perfil({navigation}){
                         <Text style = {{color: 'white', textAlign: 'center', fontSize: 18, fontWeight: 500}}>Pontuação necessária para a próxima medalha: {medalhaMax ? '\nParabéns, você alcançou a medalha máxima!' : falta}</Text>
                     </View>
 
-                    
-                      {duvida ? (
-                      <View style = {{width: '100%',marginTop: 30, color: 'black', display: 'flex', flexDirection: 'row',justifyContent: 'space-evenly'}}>
-                        <TouchableOpacity onPress={() => setDuvida(true)}>  
-                          <Text style = {{fontSize: 20,fontWeight: 'bold',textDecorationLine: 'underline', color: 'white' }}>Tópicos</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => setDuvida(false)}>
-                          <Text style = {{fontSize: 20,fontWeight: 'bold', color: 'white'}}>Comentários</Text>
-                        </TouchableOpacity>
-                      </View>) : 
-                      (<View style = {{width: '100%',marginTop: 30, color: 'black', display: 'flex', flexDirection: 'row',justifyContent: 'space-evenly'}}>
-                          <TouchableOpacity onPress={() => setDuvida(true)}>  
-                            <Text style = {{fontSize: 20,fontWeight: 'bold', color: 'white'}}>Tópicos</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity onPress={() => setDuvida(false)}>
-                            <Text style = {{fontSize: 20,fontWeight: 'bold', color: 'white', textDecorationLine: 'underline'}}>Comentários</Text>
-                          </TouchableOpacity>
-                      </View>)
-                      }
-                      
-                      
-                    
+                    <View style = {{width: '100%',marginTop: 30, color: 'black', display: 'flex', flexDirection: 'row',justifyContent: 'space-evenly'}}>
+                      <Text style = {{fontSize: 20,fontWeight: 'bold',textDecorationLine: 'underline', color: 'white' }}>Dúvidas</Text>
+                      <Text style = {{fontSize: 20,fontWeight: 'bold', color: 'white'}}>Respostas</Text>
+                    </View>
 
-                    {temPost && duvida ? 
-                      (<View style={{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
-                            <FlatList
-                              data={posts}
-                              keyExtractor={(item) => item.idtopico.toString()}
-                              scrollEnabled={false}
-                              renderItem={({ item }) => (
-                              
-                                <Post fromScreen = "Perfil" disciplina = {nomeDis} post={item} pesquisaNavegacao =  {pesquisaNavegacao} navigation = {navigation}></Post>
-
-                            )}
-                            />
-                          </View>) : (
-                      <View style = {{display: 'flex', alignItems: 'center', minWidth:vw(50),minHeight: vh(30), marginBottom: vh(5)}}>
-                            <Image source={require("../assets/rato-sem-post.png")} resizeMode="contain" style={{marginTop: "10%", minWidth:vw(50),minHeight: vh(30)}} />
-                            <Text style = {styles.titulo}>Você ainda não fez publicações</Text>
-                      </View>)}
-
-                    
                 </LinearGradient>
             </View>
             
@@ -191,11 +116,5 @@ const styles = StyleSheet.create({
     width: '57%',
     height: '37%'
     
-  },
-  titulo: {
-    color: 'white',
-    fontSize: 25,
-    fontWeight: '500',
-    textAlign: 'center',
   }
 });

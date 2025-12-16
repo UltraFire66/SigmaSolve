@@ -1,63 +1,40 @@
-import {Text,View, StyleSheet, Image, Modal, Touchable, TouchableOpacity, Alert, ActivityIndicator,FlatList, Linking} from 'react-native';
+import {Text,View, StyleSheet, Image, Modal, Touchable, TouchableOpacity, Alert, ActivityIndicator,FlatList} from 'react-native';
 import { vh, vw } from 'react-native-css-vh-vw';
-import { supabase } from '../context/supabase';
+import { createClient } from '@supabase/supabase-js'
 import { useState,useContext,useEffect } from 'react';
 import { userID } from '../context/idUsuario';
 //import CriarComentario from '../Telas/criarComentario';
 import Comentario from './comentario';
-import { Feather } from '@expo/vector-icons';
 
 
 function Post(props){
 
-    const [modalDenunciaVisible,setmodalDenunciaVisible] = useState(false);
-    const [modalImagemVisible,setmodalImagemVisible] = useState(false);
+    const [modalVisible,setModalVisible] = useState(false);
+
     const [checaDenuncia,setChecaDenuncia] = useState();
     const [carregandoDenuncia,setCarregandoDenuncia] = useState(false);
+
+
     const [textoDenuncia,setTextoDenuncia] = useState();
+
     const [comentarios,setComentarios] = useState([]);
     const [numComentarios,setNumComentarios] = useState();
     const [carregandoComentarios,setCarregandoComentarios] = useState(false);
-    const [idUsuario,setIdUsuario] = useContext(userID);
+
+
+    const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
+    const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
+    const supabase = createClient(supabaseUrl, supabaseKey)
+    const[idUsuario,setIdUsuario] = useContext(userID);
+
+
     const [abrirComentario,setAbrirComentario] = useState(false);
-    const [numComentariosComentarios,setNumComentariosComentarios] = useState([]);
-    const [medalhaBronze, setMedalhaBronze] = useState(false)
-    const [medalhaPrata, setMedalhaPrata] = useState(false)
-    const [medalhaOuro, setMedalhaOuro] = useState(false)
-    const [medalhaMax, setMedalhaMax] = useState(false)
-    const [likes, setLikes] = useState(null)
 
-    console.log(props)
-    async function buscaNumComentarioComentario(idComentario){
-
-      //setmodalDenunciaVisible(true);
-
-      const { data, error } = await supabase
-              .from('comentario')
-              .select('*',{count: 'exact'})
-              .eq('fk_comentario_idcomentario', idComentario)
-        
-      setNumComentariosComentarios(prev=>{
-
-          const novoArray = prev;
-
-          if(!data)
-            novoArray[idComentario] = 0;
-          else
-            novoArray[idComentario] = data.length;
-
-          return novoArray;
-
-      })
     
-
-
-    }
-
 
     async function buscaNumComentario(){
 
-      //setmodalDenunciaVisible(true);
+      //setModalVisible(true);
 
       const { data, error } = await supabase
               .from('comentario')
@@ -66,13 +43,11 @@ function Post(props){
         
       setNumComentarios(data.length);
       
-
-
     }
 
     async function buscaComentario(){
 
-      //setmodalDenunciaVisible(true);
+      //setModalVisible(true);
 
       const { data, error } = await supabase
               .from('comentario')
@@ -84,19 +59,13 @@ function Post(props){
                 fk_topico_idtopico,
                 fk_usuario_idusuario,
                 likes,
-                urlPDF,
-                nomePdf,
                 usuario (idusuario,nome,likes)
 
               `,{count: 'exact'})
               .eq('fk_topico_idtopico', props.post.idtopico)
-      //likes = data[0].usuario.likes
+        
       setComentarios(data);
-      //console.log(data);
-      for(let i = 0;  i < data.length; i++){
-        await buscaNumComentarioComentario(data[i].idcomentario);
-      }
-
+      console.log(data);
       setCarregandoComentarios(false);
     }
 
@@ -120,36 +89,16 @@ function Post(props){
     }
 
     async function realizarDenuncia(){
-      const { data: insereDenuncia, error: erroDenuncia} = await supabase
-        .from('denunciatopico')
-        .insert([{ flagdenuncia: true, fk_usuario_idusuario: idUsuario, fk_topico_idtopico: props.post.idtopico}])
       
-      if (erroDenuncia) console.error(erroDenuncia)
-        else{
-          Alert.alert('Denúncia cadastrada com sucesso!')
-          //setar modal falso fechar
-        }
-      const { data: countDenuncia, error: errorCount } = await supabase
-        .from('denunciatopico')
-        .select('*',{count: 'exact'})
-        .eq('fk_topico_idtopico', props.post.idtopico)
-        
-      if (errorCount) console.error(errorCount)
-        else{
-          console.log(countDenuncia.length)
-        }
-          
-      if(countDenuncia.length>14){
-        const { data: updateFlag, error: errorFlag } = await supabase
-          .from('topico')
-          .update({flagdenunciado: true})
-          .eq('idtopico', props.post.idtopico)
-        
-        if (errorFlag) console.error(errorFlag)
-        else{
-          console.log('Tópico enviado para análise.')
-        }
-      }
+        const { data, error } = await supabase
+          .from('denunciatopico')
+          .insert([{ flagdenuncia: true, fk_usuario_idusuario: idUsuario, fk_topico_idtopico: props.post.idtopico}])
+          if (error) console.error(error)
+          else{
+            Alert.alert('Denúncia cadastrada com sucesso!')
+            //setar modal falso fechar
+          }
+   
     }
 
     async function retirarDenuncia(){
@@ -172,7 +121,7 @@ function Post(props){
 
     function funcaodoSim(){
 
-       setmodalDenunciaVisible(false); 
+       setModalVisible(false); 
 
       if(checaDenuncia){
      
@@ -191,17 +140,6 @@ function Post(props){
     useEffect(()=>{
 
       buscaNumComentario();
-      console.log("pirola")
-      console.log(props.post.usuario.likes)
-      if(props.post.usuario.likes > 15){
-        setMedalhaMax(true)
-      }else if(props.post.usuario.likes > 10){
-        setMedalhaOuro(true)
-      }else if(props.post.usuario.likes > 5){
-        setMedalhaPrata(true)
-      }else{
-        setMedalhaBronze(true)
-      }
 
     },[])
     
@@ -211,25 +149,22 @@ function Post(props){
               <View style = {styles.topo}>
                 
                 <View style = {styles.usuario}>
-                  {medalhaBronze && (<Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />)}
-                  {medalhaPrata && (<Image source = {require("../assets/medalhas/medalhaPrata.png")} style={styles.medalha} />)}
-                  {medalhaOuro && (<Image source = {require("../assets/medalhas/medalhaOuro.png")} style={styles.medalha} />)}
-                  {medalhaMax && (<Image source = {require("../assets/medalhas/medalhaMaxima.png")} style={styles.medalha} />)}
+                  <Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />
                   <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 10, display: 'flex',alignItems: 'center', marginBottom: 5}}>{props.post.usuario.nome}</Text>
                 </View>
 
                 <Text style = {{fontSize: 13,color: 'black', opacity: 0.5}}>Há duas horas</Text>
 
-                <TouchableOpacity onPressOut={() => { setCarregandoDenuncia(true),procuraDenuncia(), setmodalDenunciaVisible(true)}}>
+                <TouchableOpacity onPressOut={() => { setCarregandoDenuncia(true),procuraDenuncia(), setModalVisible(true)}}>
                   <Image source = {require("../assets/icones/iconeDenuncia.png")}
                   style = {{width:20,height: 20,marginRight: 3}} />
                 </TouchableOpacity>
                 <Modal
                 animationType="none"
                 transparent={true}
-                visible={modalDenunciaVisible}
+                visible={modalVisible}
                 >
-                  <TouchableOpacity style={{backgroundColor: 'rgba(0, 0, 0, 0.5)', width:vw(100), height: vh(100)}} onPressOut={() => setmodalDenunciaVisible(false)}>                  
+                  <TouchableOpacity style={{backgroundColor: 'rgba(0, 0, 0, 0.5)', width:vw(100), height: vh(100)}} onPressOut={() => setModalVisible(false)}>                  
                   </TouchableOpacity>
                  
 
@@ -245,7 +180,7 @@ function Post(props){
                             Sim
                           </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor:'#E04083', paddingVertical:vh(1.5), paddingHorizontal:vw(5), borderRadius:15}} onPressOut={()=>{setChecaDenuncia(),setmodalDenunciaVisible(false)}}>
+                        <TouchableOpacity style={{backgroundColor:'#E04083', paddingVertical:vh(1.5), paddingHorizontal:vw(5), borderRadius:15}} onPressOut={()=>{setChecaDenuncia(),setModalVisible(false)}}>
                           <Text style={{fontWeight:600, fontSize:18, color:'white'}}>
                             Não
                           </Text>
@@ -260,46 +195,10 @@ function Post(props){
                 </Modal>
 
               </View>
-              <Text style = {{fontSize: 16,fontWeight: 'bold',width: '95%',padding:'5%'}}
-              >{props.post.titulotopico}</Text>
-              <Text style = {{fontSize: 14, width: '95%', marginLeft: vw(15), marginBottom: vh(3)}}
+
+              <Text style = {{fontSize: 14,fontWeight: 'bold',width: '95%',padding:'5%'}}
               >{props.post.conteudotexto}</Text>
-              <View style = {{display:'flex',justifyContent:'center', alignItems: 'center'}}>
-                {props.post.conteudoimg && <TouchableOpacity onPressOut={() => setmodalImagemVisible(true)}><Image source={{uri: props.post.conteudoimg}} resizeMode="stretch" style = {{width:vw(50),height: vh(20)}}/></TouchableOpacity>}
-                
-                <Modal
-                animationType="none"
-                transparent={true}
-                visible={modalImagemVisible}
-                >
-                  <TouchableOpacity style={{backgroundColor: 'rgba(0, 0, 0, 0.5)', width:vw(100), height: vh(100)}} onPressOut={() => setmodalImagemVisible(false)}>                  
-                  </TouchableOpacity>
-                 
-
-                    <View style={{backgroundColor:'white', borderWidth:3, borderColor:'#D9D9D9', position: 'absolute', width: vw(90), height: vh(50), right: vw(5), top: vh(25), borderRadius:35, display: 'flex', alignItems:'center', justifyContent:'center', gap:vh(5)}}>
-                       
-                   
-                      <>
-                        <Image source={{uri: props.post.conteudoimg}} resizeMode="stretch" style = {{width:vw(85),height: vh(44)}}/>
-                      </>
-                      
-                  
-                    </View>
-
-                  
-                </Modal>
-                
-                
-                {props.post.urlPDF && 
-                  <TouchableOpacity onPress = {() => Linking.openURL(props.post.urlPDF)}>
-                    <Feather name = 'file-text' size={100} color="black" />
-                    <Text style={{ fontWeight: "bold", marginBottom: 10, textAlign: 'center' }}>
-                      {props.post.nomePdf}
-                    </Text>
-                  </TouchableOpacity>
-
-                }
-              </View>
+              {props.post.conteudoimg && (<Image source={{uri: props.post.conteudoimg}} resizeMode='stretch' style={{width:vw(50), height:vh(20), marginBottom:vh(1)}}/>)}
             </View>
               {abrirComentario 
             
@@ -320,7 +219,7 @@ function Post(props){
                         style = {{width:20,height: 20,marginRight: 3}} />
                       </TouchableOpacity>
                       
-                      <TouchableOpacity style = {styles.criarComentario} onPress={()=>props.navigation.navigate('CriarComentario', {props: props.post, pesquisaNavegacao: props.pesquisaNavegacao, disciplina: props.disciplina,fromScreen: props.fromScreen})}>
+                      <TouchableOpacity style = {styles.criarComentario} onPress={()=>props.navigation.navigate('CriarComentario', {props: props.post, disciplina: props.disciplina})}>
                           <Text style ={{fontWeight: 'bold'}}>Comentar</Text>
                       </TouchableOpacity>
 
@@ -328,20 +227,11 @@ function Post(props){
                           data={comentarios}
                           keyExtractor={(item) => item.idcomentario.toString()}
                           scrollEnabled={false}
-                          renderItem={({ item }) => {
-
-                            const numeroDeComentarios = numComentariosComentarios[item.idcomentario.toString()];
-                            
-
-                            return (
-                              <Comentario disciplina = {props.disciplina} comentario = {item} numComentarios = {numeroDeComentarios} navigation = {props.navigation}></Comentario>
-                            )
-                            
-                          }
+                          renderItem={({ item }) => (
                           
-                            
+                            <Comentario comentario = {item} navigation = {props.navigation}></Comentario>
 
-                        }
+                        )}
                         />
 
                       

@@ -2,22 +2,23 @@ import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, Tex
 import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
 import { useContext, useState, useEffect, useCallback } from 'react'
-import { supabase } from '../context/supabase';
+import { createClient } from '@supabase/supabase-js'
 import { useRoute } from '@react-navigation/native';
 import { userID } from '../context/idUsuario';
 import Menu from '../components/menu';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { vh, vw } from 'react-native-css-vh-vw';
 import { useFocusEffect } from '@react-navigation/native';
-import { Feather } from '@expo/vector-icons';
 
 
-export default function ForumDisciplina({navigation}){
+export default function Home({navigation}){
   const [idUsuario,setIdUsuario] = useContext(userID)
   const [nome, setNome] = useState('')
+  const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
+  const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
+  const supabase = createClient(supabaseUrl, supabaseKey)
   const route = useRoute();
   const {item} = route.params;
-  const pesquisaNavegacao = item; 
   const [posts,setPosts] = useState([]);
   const [temPost,setTemPost] =  useState(true);
   const [carregando,setCarregando] = useState(true);
@@ -33,7 +34,6 @@ export default function ForumDisciplina({navigation}){
             .select('*')
             .eq('idusuario', idUsuario)
     setNome(data[0].nome)
-    
     if(data[0].likes > 15){
       setMedalhaMax(true)
     }else if(data[0].likes > 10){
@@ -55,11 +55,8 @@ export default function ForumDisciplina({navigation}){
               conteudoimg,
               titulotopico,
               datacriacao,
-              urlPDF,
-              nomePdf,
-              usuario (nome, likes)
+              usuario (nome)
               `, { count: 'exact'})
-            .eq('flagdenunciado', false)
             .eq('fk_disciplina_coddisciplina', item.coddisciplina);
     console.log(data.length)
     if(data.length != 0){
@@ -147,7 +144,7 @@ export default function ForumDisciplina({navigation}){
                           scrollEnabled={false}
                           renderItem={({ item }) => (
                           
-                            <Post fromScreen = "ForumDisciplina" disciplina = {nomeDis} post={item} pesquisaNavegacao =  {pesquisaNavegacao} navigation = {navigation}></Post>
+                            <Post disciplina = {nomeDis} post={item} navigation = {navigation}></Post>
 
                         )}
                         />

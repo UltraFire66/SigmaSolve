@@ -2,16 +2,20 @@ import { View, Text, ScrollView, StyleSheet,Button,Image, TextInput,TouchableOpa
 import { LinearGradient } from 'expo-linear-gradient';
 import { useContext, useState } from 'react'
 import { Feather } from '@expo/vector-icons';
-import { supabase } from '../context/supabase';
+import { createClient } from '@supabase/supabase-js'
 import { userID } from '../context/idUsuario';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function Login({navigation}){
+export default function Cadastro({navigation}){
     const [idUsuario,setIdUsuario] = useContext(userID)
     const [senha, setSenha] = useState('');
     const [ocultarSenha, setOcultarSenha] = useState(true); 
     const [email,setEmail] = useState('');
-    console.log(idUsuario)
+
+    const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
+    const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
     async function handleSelect(){
             const { data, error} = await supabase
               .from('usuario')

@@ -3,7 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Post from '../components/post';
 import { useState, useContext, useEffect } from 'react'
 import { Feather } from '@expo/vector-icons';
-import { supabase } from '../context/supabase';
+import { createClient } from '@supabase/supabase-js'
 import { userID } from '../context/idUsuario';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -17,6 +17,9 @@ export default function ConfigurarPerfil({navigation}){
     const [ocultarSenha, setOcultarSenha] = useState(true);
     const [ocultarSenha1, setOcultarSenha1] = useState(true);
     const [ocultarSenha3, setOcultarSenha3] = useState(true);
+    const supabaseUrl = 'https://uqwqhxadgzwrcarwuxmn.supabase.co/'
+    const supabaseKey = "sb_publishable_3wQ1GnLmKSFxOiAEzjVnsg_1EkoRyxV"
+    const supabase = createClient(supabaseUrl, supabaseKey)
     
     async function handleInsert() {
       if(senhaAtual.length > 0){
