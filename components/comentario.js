@@ -13,12 +13,14 @@ function Comentario(props){
   const [medalhaOuro, setMedalhaOuro] = useState(false)
   const [medalhaMax, setMedalhaMax] = useState(false)
   const [likeDado,setLikeDado] = useState(false);
+  const [like,setLike]=useState();
   const [deuLike,setDeuLike] = useState(0);
   const [comentarios,setComentarios] = useState([]);
   const [modalDenunciaVisible,setmodalDenunciaVisible] = useState(false);
   const [checaDenuncia,setChecaDenuncia] = useState();
   const [carregandoDenuncia,setCarregandoDenuncia] = useState(false);
   const [textoDenuncia,setTextoDenuncia] = useState();
+  const [tamanhoHorizontal,setTamanhoHorizontal] = useState(72);
 
   async function buscaComentarios(){
 
@@ -42,14 +44,22 @@ function Comentario(props){
               .eq('fk_comentario_idcomentario', props.comentario.idcomentario)
               .maybeSingle()
 
-    if(data)
+
+    if(data){
       setLikeDado(true);
-    else
+
+    }
+    else{
       setLikeDado(false);
+   
+    }
+      
 
     
 
   }
+
+  
 
 
   async function darLike(){
@@ -77,6 +87,7 @@ function Comentario(props){
     console.log("alterou likes do comentario");
     setLikeDado(true);
     setDeuLike(1);
+    
    
   }
 
@@ -107,6 +118,7 @@ function Comentario(props){
     console.log("tirou likes do comentario");
     setLikeDado(false);
     setDeuLike((-1));
+    
       
   }
 
@@ -204,7 +216,12 @@ function Comentario(props){
 
     buscaComentarios();
     buscaLike()
+
     //console.log(props.comentario)
+
+    if((props.tamanhoHorizontal))
+      setTamanhoHorizontal(props.tamanhoHorizontal)
+      
 
     if(props.comentario.usuario.likes > 15){
       setMedalhaMax(true)
@@ -220,7 +237,7 @@ function Comentario(props){
 
     return(
         
-        <View style = {styles.fundo}>
+        <View style = {[styles.fundo,{width:vw(tamanhoHorizontal)}]}>
           <View style = {styles.usuario}>
 
             {medalhaBronze && (<Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalha} />)}
@@ -268,14 +285,14 @@ function Comentario(props){
 
           </View>
 
-          <Text style = {{fontSize: 14,fontWeight: 'bold',width: '95%',padding:'5%'}}>{props.comentario.conteudotexto}</Text>
+          <Text style = {{fontSize: 14,width: '95%',padding:'5%'}}>{props.comentario.conteudotexto}</Text>
           
           <View style = {{display:'flex',justifyContent:'center', alignItems: 'center'}}>
               {props.comentario.conteudoimg && <Image source={{uri: props.comentario.conteudoimg}} resizeMode="stretch" style = {{width:vw(50),height: vh(20)}}/>}
               {props.comentario.urlPDF && 
                 <TouchableOpacity onPress = {() => Linking.openURL(props.comentario.urlPDF)}>
                   <Feather name = 'file-text' size={100} color="black" />
-                  <Text style={{ fontWeight: "bold", marginBottom: 10, textAlign: 'center' }}>
+                  <Text style={{ marginBottom: 10, textAlign: 'center' }}>
                     {props.comentario.nomePdf}
                   </Text>
                 </TouchableOpacity>
@@ -293,11 +310,11 @@ function Comentario(props){
 
             {likeDado ? (
 
-            <TouchableOpacity onPress =  {()=> {tirarLike()}} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
+            <TouchableOpacity onPressOut =  {()=> {tirarLike()}} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
               
               <Image source = {require("../assets/icones/iconeLikePreenchido.png")}
               style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
-              <Text style = {{color: 'black',fontSize: 13}}>{props.comentario.likes + deuLike}</Text>
+              <Text style = {{color: 'black',fontSize: 13}}>{like}</Text>
 
             </TouchableOpacity>
 
@@ -306,11 +323,11 @@ function Comentario(props){
             
             (
 
-            <TouchableOpacity onPress =  {()=> {darLike()}} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
+            <TouchableOpacity onPressOut =  {()=> {darLike()}} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
               
               <Image source = {require("../assets/icones/iconeLike.png")}
               style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
-              <Text style = {{color: 'black',fontSize: 13}}>{props.comentario.likes + deuLike}</Text>
+              <Text style = {{color: 'black',fontSize: 13}}>{like}</Text>
 
             </TouchableOpacity>
 
@@ -334,7 +351,7 @@ const styles = StyleSheet.create({
     borderRadius: 27,
     display: 'flex',
     flexDirection: 'column',
-    marginVertical: vh(2)
+    marginVertical: vh(0.5)
   },
   
    usuario:{

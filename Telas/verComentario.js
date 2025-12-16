@@ -17,8 +17,8 @@ export default function verComentario({navigation}){
   const {comentario} = route.params;
   const {disciplina} = route.params;
   const {numComentarios} = route.params;
-  const [posts,setPosts] = useState([]);
-  const [temPost,setTemPost] =  useState(true);
+  const [comentarios,setComentarios] = useState([]);
+  const [temComentario,setTemComentario] =  useState(true);
   const [carregando,setCarregando] = useState(true);
   const [medalhaBronze, setMedalhaBronze] = useState(false)
   const [medalhaPrata, setMedalhaPrata] = useState(false)
@@ -52,25 +52,29 @@ export default function verComentario({navigation}){
 
   
 
-  async function buscaPosts(){
+  async function buscaComentarios(){
+
     const { data, error } = await supabase
-            .from('topico')
-            .select(`idtopico,
+            .from('comentario')
+            .select(`idcomentario,
               conteudotexto,
               conteudoimg,
-              titulotopico,
-              datacriacao,
+              data,
+              likes,
+              urlPDF,
+              nomePdf,
+              flagdenunciado,
               usuario (nome)
               `, { count: 'exact'})
-            .eq('fk_disciplina_coddisciplina', props.idcodigo);
-    console.log(data.length)
+            .eq('fk_comentario_idcomentario', comentario.idcomentario);
+
+    console.log(data)
     if(data.length != 0){
-      setPosts(data);
-      console.log(data);
+      setComentarios(data);
       setCarregando(false);
     }
     else{
-      setTemPost(false);
+      setTemComentario(false);
       setCarregando(false);
     }
     
@@ -90,6 +94,8 @@ export default function verComentario({navigation}){
     }
 
     buscaNome()
+    buscaComentarios()
+    
     
   }, [])
   
@@ -137,72 +143,17 @@ export default function verComentario({navigation}){
                         <Text style ={{fontWeight: 'bold'}}>Comentar</Text>
                     </TouchableOpacity>                  
                     
-                     {/* inicio da parte de comentario */}
-                     {/* ============================================================= */}
-                            
-                        {/*<View style = {styles.fundo}>
-                          <View style = {styles.usuarioComentario}>
-                
-                            {medalhaBronzeComentario && (<Image source = {require("../assets/medalhas/medalhaBronze.png")} style={styles.medalhaComentario} />)}
-                            {medalhaPrataComentario && (<Image source = {require("../assets/medalhas/medalhaPrata.png")} style={styles.medalhaComentario} />)}
-                            {medalhaOuroComentario && (<Image source = {require("../assets/medalhas/medalhaOuro.png")} style={styles.medalhaComentario} />)}
-                            {medalhaMaxComentario && (<Image source = {require("../assets/medalhas/medalhaMaxima.png")} style={styles.medalhaComentario} />)}
-                              <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 13, display: 'flex',alignItems: 'center'}}>{comentario.usuario.nome}</Text>
+                     
+                        
+                        <View style = {{width:'auto',height:'auto',backgroundColor: '#D9D9D9',marginTop: 30,marginBottom: -(vh(1)),borderTopLeftRadius:15,borderTopRightRadius:15}}>
+                          <Comentario disciplina = {disciplina} comentario = {comentario} tamanhoHorizontal = {83} numComentarios = {numComentarios} navigation = {navigation}></Comentario>
+                        </View>
+                        
+                        
+
+                        <View style ={[styles.respostas,{height: 'auto',paddingTop: vh(1),paddingBottom: vh(4),justifyContent: 'flex-start',alignItems: 'center',flexDirection:  'column',gap: vh(2)}]} >
+                          <ActivityIndicator style = {{marginTop:vh(2)}} size = 'large' color="#000000"/>
                           
-                          </View>
-                
-                          <Text style = {{fontSize: 14,fontWeight: 'bold',width: '95%',padding:'5%'}}>{comentario.conteudotexto}</Text>
-                          
-                          <View style = {{display:'flex',justifyContent:'center', alignItems: 'center'}}>
-                              {comentario.conteudoimg && <Image source={{uri: comentario.conteudoimg}} resizeMode="stretch" style = {{width:vw(50),height: vh(20)}}/>}
-                              {comentario.urlPDF && 
-                                <TouchableOpacity onPress = {() => Linking.openURL(comentario.urlPDF)}>
-                                  <Feather name = 'file-text' size={100} color="black" />
-                                  <Text style={{ fontWeight: "bold", marginBottom: 10, textAlign: 'center' }}>
-                                    {comentario.nomePdf}
-                                  </Text>
-                                </TouchableOpacity>
-                              }
-                          </View>
-                
-                          <View style = {styles.opcoes}>
-                              <TouchableOpacity style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
-                              
-                              <Image source = {require("../assets/icones/iconeComentarioPreto.png")} resizeMode="cover"
-                              style = {{width:32,height: 32,marginTop: 3,marginLeft: '3%'}}/>
-                              <Text style = {{color: 'black',fontSize: 13}}>{numComentarios}</Text>
-                
-                            </TouchableOpacity>
-                
-                            {likeDado ? (
-                
-                            <TouchableOpacity onPress =  {()=> {tirarLike()}} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
-                              
-                              <Image source = {require("../assets/icones/iconeLikePreenchido.png")}
-                              style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
-                              <Text style = {{color: 'black',fontSize: 13}}>{props.comentario.likes + deuLike}</Text>
-                
-                            </TouchableOpacity>
-                
-                
-                            ) :
-                            
-                            (
-                
-                            <TouchableOpacity onPress =  {()=> {darLike()}} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
-                              
-                              <Image source = {require("../assets/icones/iconeLike.png")}
-                              style = {{width:22,height: 22,marginTop: 3,marginLeft: '3%'}}/>
-                              <Text style = {{color: 'black',fontSize: 13}}>{props.comentario.likes + deuLike}</Text>
-                
-                            </TouchableOpacity>
-                
-                            )}
-                          </View>
-                        </View>*/}
-                        {/* ============================================================= */}
-                        {/* fim da parte de comentario */}
-                        <View style = {{border: 50,backgroundColor: '#D9D9D9',marginTop: 30,}}>
                           <Comentario disciplina = {disciplina} comentario = {comentario} numComentarios = {numComentarios} navigation = {navigation}></Comentario>
                         </View>
                 </LinearGradient>
@@ -251,6 +202,18 @@ const styles = StyleSheet.create({
     opacity: 1,
     marginBottom: '10%',
    
+  },
+  respostas: {
+    height: vh(4.3),
+    width: vw(83),
+    backgroundColor: '#336699',
+    borderBottomRightRadius: 15,
+    borderBottomLeftRadius: 15,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: '3%',
+    
   },
   titulo: {
     color: 'white',

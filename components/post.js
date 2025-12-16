@@ -89,6 +89,7 @@ function Post(props){
                 usuario (idusuario,nome,likes)
 
               `,{count: 'exact'})
+              .order('likes', {ascending:false})
               .eq('fk_topico_idtopico', props.post.idtopico)
       //likes = data[0].usuario.likes
       setComentarios(data);
@@ -334,7 +335,7 @@ function Post(props){
                             
 
                             return (
-                              <Comentario disciplina = {props.disciplina} comentario = {item} numComentarios = {numeroDeComentarios} navigation = {props.navigation}></Comentario>
+                              <Comentario disciplina = {props.disciplina} comentario = {item} tamanhoHorizontal = {72} numComentarios = {numeroDeComentarios} navigation = {props.navigation}></Comentario>
                             )
                             
                           }

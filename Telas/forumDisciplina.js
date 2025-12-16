@@ -59,6 +59,7 @@ export default function ForumDisciplina({navigation}){
               nomePdf,
               usuario (nome, likes)
               `, { count: 'exact'})
+              .order('datacriacao',{ascending:false})
             .eq('flagdenunciado', false)
             .eq('fk_disciplina_coddisciplina', item.coddisciplina);
     console.log(data.length)
