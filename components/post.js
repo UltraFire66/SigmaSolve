@@ -335,7 +335,7 @@ function Post(props){
                             
 
                             return (
-                              <Comentario disciplina = {props.disciplina} comentario = {item} tamanhoHorizontal = {72} numComentarios = {numeroDeComentarios} navigation = {props.navigation}></Comentario>
+                              <Comentario  disciplina = {props.disciplina} pesquisaNavegacao= {props.pesquisaNavegacao} comentario = {item} tamanhoHorizontal = {72} numComentarios = {numeroDeComentarios} navigation = {props.navigation}></Comentario>
                             )
                             
                           }

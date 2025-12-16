@@ -14,7 +14,9 @@ import ForumDisciplina from './Telas/forumDisciplina';
 import CriarTopico from './Telas/criarTopico';
 import VerComentario from './Telas/verComentario';
 import CriarComentario from './Telas/criarComentario';
+import CriarComentarioComentario from './Telas/criarComentarioComentario';
 import AdicionarDisciplina from './Telas/adicionarDisciplina';
+
 import { userID } from './context/idUsuario';
 
 const Stack = createNativeStackNavigator();
@@ -37,6 +39,7 @@ export default function App() {
             <Stack.Screen name = "CriarTopico" component={CriarTopico}/>
             <Stack.Screen name = "VerComentario" component={VerComentario}/>
             <Stack.Screen name = "CriarComentario" component={CriarComentario}/>
+            <Stack.Screen name = "CriarComentarioComentario" component={CriarComentarioComentario}/>
             <Stack.Screen name = "AdicionarDisciplina" component={AdicionarDisciplina}/>
           </Stack.Navigator>
         </NavigationContainer>

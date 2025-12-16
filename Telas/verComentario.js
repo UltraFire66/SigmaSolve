@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, StyleSheet,Button, TouchableOpacity, Image, TextInput, FlatList, ActivityIndicator, Alert} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Comentario from '../components/comentario';
-import { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { supabase } from '../context/supabase';
 import { useRoute } from '@react-navigation/native';
 import { userID } from '../context/idUsuario';
@@ -16,6 +16,7 @@ export default function verComentario({navigation}){
   const route = useRoute();
   const {comentario} = route.params;
   const {disciplina} = route.params;
+  const {pesquisaNavegacao} = route.params;
   const {numComentarios} = route.params;
   const [comentarios,setComentarios] = useState([]);
   const [temComentario,setTemComentario] =  useState(true);
@@ -28,9 +29,9 @@ export default function verComentario({navigation}){
   const [medalhaPrataComentario, setMedalhaPrataComentario] = useState(false)
   const [medalhaOuroComentario, setMedalhaOuroComentario] = useState(false)
   const [medalhaMaxComentario, setMedalhaMaxComentario] = useState(false)
+  const [numComentariosComentarios,setNumComentariosComentarios]=useState([]);
 
-  console.log('aqui')
-  console.log(comentario)
+
 
   async function buscaNome(){
     const { data, error } = await supabase
@@ -69,35 +70,72 @@ export default function verComentario({navigation}){
             .eq('fk_comentario_idcomentario', comentario.idcomentario);
 
     console.log(data)
+
+    for(let i = 0;  i < data.length; i++){
+        await buscaNumComentarioComentario(data[i].idcomentario);
+      }
+
     if(data.length != 0){
       setComentarios(data);
       setCarregando(false);
+      
     }
     else{
       setTemComentario(false);
       setCarregando(false);
+ 
     }
     
   }
 
+  async function buscaNumComentarioComentario(idComentario){
+
+      //setmodalDenunciaVisible(true);
+
+      const { data, error } = await supabase
+              .from('comentario')
+              .select('*',{count: 'exact'})
+              .eq('fk_comentario_idcomentario', idComentario)
+        
+      setNumComentariosComentarios(prev=>{
+
+          const novoArray = prev;
+
+          if(!data)
+            novoArray[idComentario] = 0;
+          else
+            novoArray[idComentario] = data.length;
+
+          return novoArray;
+
+      })
+    
+
+
+    }
 
   useEffect(() => {
     
+    setCarregando(true)
+    console.log('entrou na pag')
     if(comentario.usuario.likes > 15){
       setMedalhaMaxComentario(true)
-    }else if(comentario.usuario.likes.likes > 10){
+    }else if(comentario.usuario.likes > 10){
       setMedalhaOuroComentario(true)
-    }else if(comentario.usuario.likes.likes > 5){
+    }else if(comentario.usuario.likes > 5){
       setMedalhaPrataComentario(true)
     }else{
       setMedalhaBronzeComentario(true)
     }
 
     buscaNome()
+    setComentarios([])
     buscaComentarios()
     
     
-  }, [])
+  }, [comentario.idcomentario])
+
+  
   
 
     return(
@@ -138,13 +176,8 @@ export default function verComentario({navigation}){
                     </View>
                     <View style = {styles.topoTela}>
                         <Text style = {styles.titulo}>{disciplina}</Text>
-                    </View>
-                    <TouchableOpacity style = {styles.criarTopico} onPress={()=>navigation.navigate('CriarComentario')}>{/*acrescentar o id do comentario e mais informações extras sobre ele para a tela por route*/}
-                        <Text style ={{fontWeight: 'bold'}}>Comentar</Text>
-                    </TouchableOpacity>                  
-                    
+                    </View>                  
                      
-                        
                         <View style = {{width:'auto',height:'auto',backgroundColor: '#D9D9D9',marginTop: 30,marginBottom: -(vh(1)),borderTopLeftRadius:15,borderTopRightRadius:15}}>
                           <Comentario disciplina = {disciplina} comentario = {comentario} tamanhoHorizontal = {83} numComentarios = {numComentarios} navigation = {navigation}></Comentario>
                         </View>
@@ -152,9 +185,40 @@ export default function verComentario({navigation}){
                         
 
                         <View style ={[styles.respostas,{height: 'auto',paddingTop: vh(1),paddingBottom: vh(4),justifyContent: 'flex-start',alignItems: 'center',flexDirection:  'column',gap: vh(2)}]} >
-                          <ActivityIndicator style = {{marginTop:vh(2)}} size = 'large' color="#000000"/>
                           
-                          <Comentario disciplina = {disciplina} comentario = {comentario} numComentarios = {numComentarios} navigation = {navigation}></Comentario>
+                          {carregando?(
+                            
+                            <ActivityIndicator style = {{marginTop:vh(2)}} size = 'large' color="#000000"/>
+                            
+                          ):(
+                            <>
+                              <TouchableOpacity style = {styles.criarComentario} onPress={()=>navigation.navigate('CriarComentarioComentario', {props: comentario, pesquisaNavegacao: pesquisaNavegacao, disciplina: disciplina, numComentarios: numComentarios})} >
+                                <Text style ={{fontWeight: 'bold'}}>Comentar</Text>
+                              </TouchableOpacity>
+
+                              <FlatList
+                                  data={comentarios}
+                                  keyExtractor={(item) => item.idcomentario.toString()}
+                                  scrollEnabled={false}
+                                  renderItem={({ item }) => {
+
+                                    const numeroDeComentarios = numComentariosComentarios[item.idcomentario.toString()];
+                                    
+
+                                    return (
+                                      <Comentario disciplina = {disciplina} comentario = {item} pesquisaNavegacao= {pesquisaNavegacao} tamanhoHorizontal = {72} numComentarios = {numeroDeComentarios} navigation = {navigation}></Comentario>
+                                    )
+                                    
+                                  }
+                                  
+                                    
+
+                                }
+                                />
+                                
+                            </>
+                          )}
+                          
                         </View>
                 </LinearGradient>
           </View>
@@ -284,4 +348,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: vh(1)
   },
+
+  criarComentario:{
+    backgroundColor: 'white',
+    width: vw(35),
+    height: vh(6),
+    borderRadius: 20,
+    fontSize: 15,
+    fontWeight: 'bold',
+    display: 'flex',
+    textAlign:'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    whiteSpace: 'nowrap',   
+  }
 });

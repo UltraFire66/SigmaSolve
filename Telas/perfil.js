@@ -125,8 +125,10 @@ export default function Perfil({navigation}){
                         <TouchableOpacity onPress={() => setDuvida(false)}>
                           <Text style = {{fontSize: 20,fontWeight: 'bold', color: 'white'}}>Comentários</Text>
                         </TouchableOpacity>
-                      </View>) : 
-                      (<View style = {{width: '100%',marginTop: 30, color: 'black', display: 'flex', flexDirection: 'row',justifyContent: 'space-evenly'}}>
+                      </View>
+                      ) : 
+                      (
+                      <View style = {{width: '100%',marginTop: 30, color: 'black', display: 'flex', flexDirection: 'row',justifyContent: 'space-evenly'}}>
                           <TouchableOpacity onPress={() => setDuvida(true)}>  
                             <Text style = {{fontSize: 20,fontWeight: 'bold', color: 'white'}}>Tópicos</Text>
                           </TouchableOpacity>
