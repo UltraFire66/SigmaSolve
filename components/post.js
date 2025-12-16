@@ -62,6 +62,7 @@ function Post(props){
                 usuario (idusuario,nome,likes)
 
               `,{count: 'exact'})
+              .order('likes', {ascending:false})
               .eq('fk_topico_idtopico', props.post.idtopico)
         
       setComentarios(data);
@@ -227,7 +228,20 @@ function Post(props){
                           data={comentarios}
                           keyExtractor={(item) => item.idcomentario.toString()}
                           scrollEnabled={false}
+<<<<<<< HEAD
                           renderItem={({ item }) => (
+=======
+                          renderItem={({ item }) => {
+
+                            const numeroDeComentarios = numComentariosComentarios[item.idcomentario.toString()];
+                            
+
+                            return (
+                              <Comentario disciplina = {props.disciplina} comentario = {item} tamanhoHorizontal = {72} numComentarios = {numeroDeComentarios} navigation = {props.navigation}></Comentario>
+                            )
+                            
+                          }
+>>>>>>> 0347502cb6611090427ef6f615a0de7b14ab0559
                           
                             <Comentario comentario = {item} navigation = {props.navigation}></Comentario>
 

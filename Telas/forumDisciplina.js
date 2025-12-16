@@ -57,6 +57,7 @@ export default function Home({navigation}){
               datacriacao,
               usuario (nome)
               `, { count: 'exact'})
+            .eq('flagdenunciado', false)
             .eq('fk_disciplina_coddisciplina', item.coddisciplina);
     console.log(data.length)
     if(data.length != 0){
