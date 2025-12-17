@@ -135,7 +135,7 @@ export default function ForumDisciplina({navigation}){
                   </View>
 
                   <View style = {{display: 'flex', width: '42%', alignItems: 'center', flexDirection: 'row',height: "45%", borderRadius: 10, backgroundColor: 'white', marginLeft: '5%', marginRight:'5%'}}>
-                    <TextInput style = {{color: 'black', width: '80%',height:'50%',marginLeft: '5%'}} value={filtro} onChangeText={setFiltro}/>
+                    <TextInput style = {{color: 'black', width: '80%',marginLeft: '5%'}} value={filtro} onChangeText={setFiltro}/>
 
                     <TouchableOpacity onPress={()=>{fazerPesquisa()}}>
 
