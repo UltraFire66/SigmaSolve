@@ -63,7 +63,8 @@ function Post(props){
               .from('comentario')
               .select('*',{count: 'exact'})
               .eq('fk_topico_idtopico', props.post.idtopico)
-        
+              .eq('flagdenunciado', false)
+              
       setNumComentarios(data.length);
       
 
@@ -91,6 +92,7 @@ function Post(props){
               `,{count: 'exact'})
               .order('likes', {ascending:false})
               .eq('fk_topico_idtopico', props.post.idtopico)
+              .eq('flagdenunciado', false)
       //likes = data[0].usuario.likes
       setComentarios(data);
       //console.log(data);
@@ -218,8 +220,6 @@ function Post(props){
                   {medalhaMax && (<Image source = {require("../assets/medalhas/medalhaMaxima.png")} style={styles.medalha} />)}
                   <Text style = {{fontWeight: 'bold', whiteSpace: 'nowrap', fontSize: 10, display: 'flex',alignItems: 'center', marginBottom: 5}}>{props.post.usuario.nome}</Text>
                 </View>
-
-                <Text style = {{fontSize: 13,color: 'black', opacity: 0.5}}>Há duas horas</Text>
 
                 <TouchableOpacity onPressOut={() => { setCarregandoDenuncia(true),procuraDenuncia(), setmodalDenunciaVisible(true)}}>
                   <Image source = {require("../assets/icones/iconeDenuncia.png")}

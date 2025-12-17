@@ -63,14 +63,14 @@ export default function Cadastro({navigation}){
                     <TextInput value={email} onChangeText={setEmail} style={{width:"90%",backgroundColor: 'white', borderColor: 'gray', borderWidth: 1, paddingHorizontal: 10, borderRadius: 5, marginLeft:"5%"}}/>
                     <Text style={{color:'#003366', marginLeft:"7%", marginTop:"5%", fontWeight: "500"}}>Senha</Text>
                     <View style={{flexDirection: 'row', alignItems:'center'}}>
-                      <TextInput style={{width:"90%",backgroundColor: 'white', borderColor: 'gray', borderWidth: 1, paddingHorizontal: 10, borderRadius: 5, marginLeft:"5%",paddingRight: 40}} secureTextEntry={ocultarSenha} value={senha} onChangeText={setSenha}/>
+                      <TextInput style={{color: 'black', width:"90%", backgroundColor: 'white', borderColor: 'gray', borderWidth: 1, paddingHorizontal: 10, borderRadius: 5, marginLeft:"5%",paddingRight: 40}} secureTextEntry={ocultarSenha} value={senha} onChangeText={setSenha}/>
                       <TouchableOpacity style={{position:'absolute', marginLeft:"85%"}} onPress={() => setOcultarSenha(!ocultarSenha)}>
                         <Feather name={ocultarSenha ? 'eye-off' : 'eye'} size={22} color="#555" />
                       </TouchableOpacity>
                     </View>
                     <Text style={{color:'#003366', marginLeft:"7%", marginTop:"5%", fontWeight: "500"}}>Confimar Senha</Text>
                     <View style={{flexDirection: 'row', alignItems:'center'}}>
-                      <TextInput style={{width:"90%",backgroundColor: 'white', borderColor: 'gray', borderWidth: 1, paddingHorizontal: 10, borderRadius: 5, marginLeft:"5%",paddingRight: 40}} secureTextEntry={ocultarSenha1} value={senha1} onChangeText={setSenha1}/>
+                      <TextInput style={{color: 'black', width:"90%", backgroundColor: 'white', borderColor: 'gray', borderWidth: 1, paddingHorizontal: 10, borderRadius: 5, marginLeft:"5%",paddingRight: 40}} secureTextEntry={ocultarSenha1} value={senha1} onChangeText={setSenha1}/>
                       <TouchableOpacity style={{position:'absolute', marginLeft:"85%"}} onPress={() => setOcultarSenha1(!ocultarSenha1)}>
                         <Feather name={ocultarSenha1 ? 'eye-off' : 'eye'} size={22} color="#555" />
                       </TouchableOpacity>

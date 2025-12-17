@@ -305,7 +305,7 @@ function Comentario(props){
 
             </TouchableOpacity>
 
-            {likeDado ? (
+            {likeDado ? ( 
 
             <TouchableOpacity onPressOut =  {()=> {tirarLike()}} style = {{display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center',marginLeft: 10}}>
               

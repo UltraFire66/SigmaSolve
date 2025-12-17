@@ -67,7 +67,8 @@ export default function verComentario({navigation}){
               flagdenunciado,
               usuario (nome)
               `, { count: 'exact'})
-            .eq('fk_comentario_idcomentario', comentario.idcomentario);
+            .eq('fk_comentario_idcomentario', comentario.idcomentario)
+            .eq('flagdenunciado', false)
 
     console.log(data)
 
@@ -96,6 +97,7 @@ export default function verComentario({navigation}){
               .from('comentario')
               .select('*',{count: 'exact'})
               .eq('fk_comentario_idcomentario', idComentario)
+              .eq('flagdenunciado', false)
         
       setNumComentariosComentarios(prev=>{
 
